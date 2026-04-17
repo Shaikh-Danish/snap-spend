@@ -1,15 +1,15 @@
-import React from "react";
 import { Q } from "@nozbe/watermelondb";
-import { View, Dimensions } from "react-native";
 import withObservables from "@nozbe/with-observables";
-import { Svg, Path, Defs, LinearGradient, Stop } from "react-native-svg";
-import { TrendingUp, TrendingDown, MoreHorizontal } from "lucide-react-native";
+import { TrendingDown, TrendingUp } from "lucide-react-native";
+import React from "react";
+import { Dimensions, View } from "react-native";
+import { Defs, LinearGradient, Path, Stop, Svg } from "react-native-svg";
 
-import { database } from "@/model/database";
+import { database } from "@/model";
 import Transaction from "@/model/transaction";
 
-import { Text } from "@/components/ui/text";
 import { Card } from "@/components/ui/card";
+import { Text } from "@/components/ui/text";
 
 interface StatsCardsProps {
   earnings: number;

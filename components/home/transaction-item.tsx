@@ -1,9 +1,8 @@
-import React from "react";
-import { View, Image } from "react-native";
 import { Text } from "@/components/ui/text";
-import { Card } from "@/components/ui/card";
-import { ShoppingBag, Coffee, Car, Home, Smartphone } from "lucide-react-native";
 import Transaction from "@/model/transaction";
+import { Car, Coffee, Home, ShoppingBag, Smartphone } from "lucide-react-native";
+import React from "react";
+import { View } from "react-native";
 
 interface TransactionItemProps {
   transaction: Transaction;

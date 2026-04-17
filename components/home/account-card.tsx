@@ -1,9 +1,9 @@
+import { Card } from "@/components/ui/card";
+import { Text } from "@/components/ui/text";
+import Wallet, { WalletType } from "@/model/wallet";
+import { CreditCard, Landmark, Wallet as WalletIcon } from "lucide-react-native";
 import React from "react";
 import { View } from "react-native";
-import { Text } from "@/components/ui/text";
-import { Card } from "@/components/ui/card";
-import { CreditCard, Wallet as WalletIcon, Landmark } from "lucide-react-native";
-import Wallet, { WalletType } from "@/model/wallet";
 
 interface AccountCardProps {
   account: Wallet;
@@ -29,7 +29,7 @@ export const AccountCard = ({ account }: AccountCardProps) => {
   return (
     <Card className={`mr-3 w-60 h-36 border-0 ${getCardBg(account.type)} p-5 rounded-[24px] shadow-sm relative overflow-hidden`}>
       <View className="absolute -right-8 -top-8 w-24 h-24 bg-white/10 rounded-full" />
-      
+
       <View className="flex-row justify-between items-start mb-4">
         <View className="bg-white/20 p-2 rounded-xl">
           {getWalletIcon(account.type)}

@@ -1,8 +1,8 @@
-import React from "react";
-import { View, ImageBackground } from "react-native";
-import { Text } from "@/components/ui/text";
 import { Card } from "@/components/ui/card";
+import { Text } from "@/components/ui/text";
 import { MoreHorizontal } from "lucide-react-native";
+import React from "react";
+import { View } from "react-native";
 
 interface TotalBalanceProps {
   balance: number;
@@ -14,7 +14,7 @@ export const TotalBalance = ({ balance }: TotalBalanceProps) => {
       <Card className="bg-[#1C1C1E] border-0 rounded-[28px] p-5 shadow-xl relative overflow-hidden">
         {/* Abstract pattern decoration */}
         <View className="absolute -right-10 -top-10 w-32 h-32 bg-white/5 rounded-full" />
-        
+
         <View className="flex-row justify-between items-center mb-4">
           <Text className="text-white/60 text-xs font-medium uppercase tracking-widest">Total Balance</Text>
           <MoreHorizontal size={18} color="white" opacity={0.5} />

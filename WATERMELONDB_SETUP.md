@@ -208,12 +208,67 @@ Only re-run the native build if you:
 
 ## Troubleshooting
 
+### `Cannot find module 'expo-router/_ctx-shared'`
+
+Caused by pnpm running expo from the global dlx cache instead of your local project.
+
+```bash
+pnpm expo install expo-router
+```
+
+Then always use `pnpm start` / `pnpm android` (scripts in `package.json`), never `npx expo` or `pnpm dlx expo`.
+
+---
+
+### `Could not find host.exp.exponent:expo.modules.X`
+
+A package version is mismatched with your SDK. Run:
+
+```bash
+pnpm expo install --fix
+```
+
+This realigns all native packages to the correct SDK 55 versions.
+
+---
+
+### CMake / Gradle build fails after `--fix` or package version change
+
+When packages are swapped, stale CMake cache causes the build to choke on missing codegen JNI directories (`GLOB mismatch`, `not an existing directory`). Fix:
+
+```bash
+# Delete stale CMake cache
+rm -rf android/app/.cxx
+
+# Clean Gradle
+cd android && ./gradlew clean && cd ..
+
+# Rebuild
+pnpm android
+```
+
+**Full nuclear reset** (if the above still fails):
+
+```bash
+rm -rf android/app/.cxx
+rm -rf android/build
+rm -rf android/app/build
+rm -rf node_modules/.cache
+
+cd android && ./gradlew clean && cd ..
+
+pnpm android
+```
+
+---
+
+### Other common errors
+
 | Error | Fix |
 |---|---|
-| `Cannot find module 'expo-router/_ctx-shared'` | Run `pnpm expo install expo-router` then use `pnpm start` not `pnpm dlx expo` |
 | App crashes on Android launch | Check `pickFirst: ['**/libc++_shared.so']` is in `expo-build-properties` |
-| iOS simulator build fails on M1/M2 | Add `"excludeSimArch": true` to plugin options |
-| Decorators not working / syntax errors | Ensure `legacy: true` is set in babel decorator plugin |
+| iOS simulator build fails on M1/M2 | Add `"excludeSimArch": true` to the plugin options |
+| Decorators not working / syntax errors | Ensure `legacy: true` is set in the Babel decorator plugin |
 | `@morrowdigital` plugin errors | Replace with `@lovesworking/watermelondb-expo-plugin-sdk-52-plus` |
 | 5-minute build on every restart | You're running `expo run:android` — switch to `expo start` for daily dev |
 
@@ -224,3 +279,4 @@ Only re-run the native build if you:
 - JSI is enabled automatically on Android by the plugin (fast synchronous DB access)
 - Always bump `schema version` and add a migration entry when you change your schema
 - WatermelonDB does **not** work in Expo Go under any circumstances
+- When setting up on a new machine, run `pnpm android` once for the native build, then use `pnpm start` going forward
