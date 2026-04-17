@@ -12,7 +12,7 @@ const adapter = new SQLiteAdapter({
     dbName: 'snap_spend',
     schema,
     migrations,
-    jsi: false,
+    jsi: true,
     onSetUpError: error => {
         console.log(error);
     },

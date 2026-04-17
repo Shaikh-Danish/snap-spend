@@ -1,5 +1,5 @@
 import { Model } from '@nozbe/watermelondb';
-import { field, text, date, readonly, relation } from '@nozbe/watermelondb/decorators';
+import { date, field, readonly, relation, text } from '@nozbe/watermelondb/decorators';
 
 export default class Transaction extends Model {
   static table = 'transactions';

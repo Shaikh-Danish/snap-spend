@@ -9,7 +9,6 @@ import { useUniwind } from 'uniwind';
 
 import { AddNewExpenseFab } from '@/components/navbar/add-new-expense-fab';
 import { NAV_THEME } from '@/lib/theme';
-import { seedAccounts } from '@/model/seed';
 import React, { useEffect } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -25,7 +24,7 @@ export default function TabLayout() {
   const { theme } = useUniwind();
 
   useEffect(() => {
-    seedAccounts();
+    // clearrAllData();
   }, []);
 
   return (

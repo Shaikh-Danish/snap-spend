@@ -46,3 +46,16 @@ export const seedAccounts = async () => {
   console.log('Seeding complete!');
 };
 
+export const clearAllData = async () => {
+  await database.write(async () => {
+    // This will delete all records from the tables
+    const wallets = await database.collections.get<Wallet>('wallets').query().fetch();
+    const transactions = await database.collections.get<any>('transactions').query().fetch();
+    
+    for (const record of [...wallets, ...transactions]) {
+      await record.destroyPermanently();
+    }
+  });
+  console.log('All data cleared!');
+};
+
