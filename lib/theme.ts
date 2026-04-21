@@ -1,64 +1,64 @@
 import { DarkTheme, DefaultTheme, type Theme } from '@react-navigation/native';
 
 /**
- * Semantic color tokens mapped from globals.css (oklch → hex for RN).
- * Derived from your specific OKLCH values:
- * Primary (Light): oklch(0.53 0.27 286) -> #a855f7
- * Primary (Dark):  oklch(0.61 0.22 291) -> #a855f7 (closer to brand purple)
- * Background (Dark): oklch(0.22 0.00 271) -> #09090b
+ * Semantic color tokens mapped from globals.css.
+ * Syncing JS theme with the new OKLCH values from global.css:
+ * Primary: oklch(0.55 0.14 48) -> #b45309 (Amber/Orange)
+ * Background (Light): oklch(0.98 0.00 84) -> #fcfaf7
+ * Background (Dark):  oklch(0.21 0.00 56) -> #1c1b19
  */
 export const THEME = {
   light: {
-    background: '#fafafa',
-    foreground: '#09090b',
-    card: '#ffffff',
-    cardForeground: '#09090b',
-    popover: '#ffffff',
-    popoverForeground: '#09090b',
-    primary: '#a855f7', // Brand Purple
+    background: '#fcfaf7',
+    foreground: '#635b4b',
+    card: '#f7f4f0',
+    cardForeground: '#635b4b',
+    popover: '#f7f4f0',
+    popoverForeground: '#635b4b',
+    primary: '#b45309', // Amber 600
     primaryForeground: '#ffffff',
-    secondary: '#f4f4f5',
-    secondaryForeground: '#18181b',
-    muted: '#f4f4f5',
-    mutedForeground: '#71717a',
-    accent: '#f4f4f5',
-    accentForeground: '#18181b',
-    destructive: '#ef4444',
-    destructiveForeground: '#fafafa',
-    border: '#e4e4e7',
-    input: '#e4e4e7',
-    ring: '#a1a1aa',
+    secondary: '#dbd1bc',
+    secondaryForeground: '#635b4b',
+    muted: '#f0e9d9',
+    mutedForeground: '#8c8273',
+    accent: '#e6dec8',
+    accentForeground: '#635b4b',
+    destructive: '#991b1b',
+    destructiveForeground: '#ffffff',
+    border: '#e3dbca',
+    input: '#e3dbca',
+    ring: '#b45309',
     chart1: '#e45a2e',
     chart2: '#10b981',
-    chart3: '#2d4a5e',
-    chart4: '#8B5CF6',
-    chart5: '#F59E0B',
+    chart3: '#2d4b5e',
+    chart4: '#a855f7',
+    chart5: '#f59e0b',
   },
   dark: {
-    background: '#09090b',
-    foreground: '#fafafa',
-    card: '#18181b',
-    cardForeground: '#fafafa',
-    popover: '#18181b',
-    popoverForeground: '#fafafa',
-    primary: '#a855f7', // Brand Purple
-    primaryForeground: '#ffffff',
-    secondary: '#27272a',
-    secondaryForeground: '#fafafa',
-    muted: '#27272a',
-    mutedForeground: '#a1a1aa',
-    accent: '#27272a',
-    accentForeground: '#fafafa',
-    destructive: '#7f1d1d',
-    destructiveForeground: '#fafafa',
-    border: '#27272a',
-    input: '#27272a',
-    ring: '#71717a',
+    background: '#1c1b19',
+    foreground: '#f2f1f0',
+    card: '#292724',
+    cardForeground: '#f2f1f0',
+    popover: '#292724',
+    popoverForeground: '#f2f1f0',
+    primary: '#f59e0b', // Amber 500
+    primaryForeground: '#000000',
+    secondary: '#635b4b',
+    secondaryForeground: '#f2f1f0',
+    muted: '#363430',
+    mutedForeground: '#a6a095',
+    accent: '#47443e',
+    accentForeground: '#f2f1f0',
+    destructive: '#f43f5e',
+    destructiveForeground: '#ffffff',
+    border: '#3d3a36',
+    input: '#3d3a36',
+    ring: '#f59e0b',
     chart1: '#3b82f6',
     chart2: '#10b981',
-    chart3: '#d9903a',
-    chart4: '#8B5CF6',
-    chart5: '#F59E0B',
+    chart3: '#facc15',
+    chart4: '#a855f7',
+    chart5: '#ef4444',
   },
 };
 

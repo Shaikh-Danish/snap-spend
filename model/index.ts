@@ -2,6 +2,7 @@ import { Database } from '@nozbe/watermelondb';
 import SQLiteAdapter from '@nozbe/watermelondb/adapters/sqlite';
 
 import Budget from './budget';
+import Category from './category';
 import CategoryRule from './category-rule';
 import migrations from './migrations';
 import schema from './schema';
@@ -20,5 +21,10 @@ const adapter = new SQLiteAdapter({
 
 export const database = new Database({
     adapter,
-    modelClasses: [Transaction, Budget, Wallet, CategoryRule],
+    modelClasses: [Transaction, Budget, Wallet, CategoryRule, Category],
 });
+
+export { default as Category } from './category';
+export { default as Transaction } from './transaction';
+export { default as Wallet } from './wallet';
+

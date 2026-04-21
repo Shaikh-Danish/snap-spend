@@ -1,8 +1,17 @@
 import { appSchema, tableSchema } from '@nozbe/watermelondb'
 
 export default appSchema({
-    version: 1,
+    version: 3,
     tables: [
+        tableSchema({
+            name: 'categories',
+            columns: [
+                { name: 'name', type: 'string', isIndexed: true },
+                { name: 'color', type: 'string' },
+                { name: 'icon', type: 'string' },
+                { name: 'usage_count', type: 'number' },
+            ],
+        }),
         tableSchema({
             name: 'wallets',
             columns: [
@@ -23,6 +32,7 @@ export default appSchema({
                 { name: 'account_id', type: 'string', isIndexed: true },
                 { name: 'external_id', type: 'string', isOptional: true, isIndexed: true }, // To prevent duplicates
                 { name: 'status', type: 'string' }, // 'pending_ai', 'confirmed', 'excluded'
+                { name: 'date', type: 'number' },
                 { name: 'created_at', type: 'number' },
             ],
         }),

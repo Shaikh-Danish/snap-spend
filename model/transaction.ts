@@ -11,6 +11,7 @@ export default class Transaction extends Model {
   @text('account_id') accountId!: string;
   @text('external_id') externalId?: string;
   @text('status') status!: string;
+  @date('date') date!: Date;
   @readonly @date('created_at') createdAt!: Date;
 
   @relation('accounts', 'account_id') account!: any;

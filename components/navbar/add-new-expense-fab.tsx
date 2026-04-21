@@ -54,6 +54,12 @@ export function AddNewExpenseFab({
       color: colors.chart5,
     },
     {
+      key: 'manual',
+      label: 'Manual',
+      icon: <PlusIcon size={22} color={colors.primaryForeground} />,
+      color: colors.primary,
+    },
+    {
       key: 'gallery',
       label: 'Gallery',
       icon: <ImageIcon size={22} color={colors.primaryForeground} />,
@@ -64,7 +70,12 @@ export function AddNewExpenseFab({
   // Animations
   const overlayAnim = useRef(new Animated.Value(0)).current;
   const fabRotation = useRef(new Animated.Value(0)).current;
-  const actionAnims = useRef(actions.map(() => new Animated.Value(0))).current;
+  
+  // Ensure we have enough animation values for all actions
+  const actionAnims = useRef<Animated.Value[]>([]);
+  if (actionAnims.current.length !== actions.length) {
+    actionAnims.current = actions.map((_, i) => actionAnims.current[i] || new Animated.Value(0));
+  }
 
   const openMenu = useCallback(() => {
     setMenuOpen(true);
@@ -81,7 +92,7 @@ export function AddNewExpenseFab({
         tension: 65,
         friction: 8,
       }),
-      ...actionAnims.map((anim, i) =>
+      ...actionAnims.current.map((anim, i) =>
         Animated.spring(anim, {
           toValue: 1,
           useNativeDriver: true,
@@ -91,7 +102,7 @@ export function AddNewExpenseFab({
         })
       ),
     ]).start();
-  }, [overlayAnim, fabRotation, actionAnims]);
+  }, [overlayAnim, fabRotation]);
 
   const closeMenu = useCallback(() => {
     Animated.parallel([
@@ -106,7 +117,7 @@ export function AddNewExpenseFab({
         tension: 65,
         friction: 8,
       }),
-      ...actionAnims.map((anim) =>
+      ...actionAnims.current.map((anim) =>
         Animated.timing(anim, {
           toValue: 0,
           duration: 150,
@@ -114,7 +125,7 @@ export function AddNewExpenseFab({
         })
       ),
     ]).start(() => setMenuOpen(false));
-  }, [overlayAnim, fabRotation, actionAnims]);
+  }, [overlayAnim, fabRotation]);
 
   const handleFabPress = () => {
     if (menuOpen) {
@@ -126,7 +137,9 @@ export function AddNewExpenseFab({
 
   const handleActionPress = (key: string) => {
     closeMenu();
-    // TODO: handle each action
+    if (key === 'manual') {
+      navigation.navigate('modal');
+    }
     console.log('Action pressed:', key);
   };
 
@@ -227,11 +240,11 @@ export function AddNewExpenseFab({
           {/* Action buttons */}
           <View style={styles.actionsContainer}>
             {actions.map((action, i) => {
-              const translateY = actionAnims[i].interpolate({
+              const translateY = actionAnims.current[i].interpolate({
                 inputRange: [0, 1],
                 outputRange: [80, 0],
               });
-              const scale = actionAnims[i].interpolate({
+              const scale = actionAnims.current[i].interpolate({
                 inputRange: [0, 1],
                 outputRange: [0.3, 1],
               });
@@ -242,7 +255,7 @@ export function AddNewExpenseFab({
                   style={[
                     styles.actionItem,
                     {
-                      opacity: actionAnims[i],
+                      opacity: actionAnims.current[i],
                       transform: [{ translateY }, { scale }],
                     },
                   ]}
@@ -254,7 +267,12 @@ export function AddNewExpenseFab({
                   >
                     {action.icon}
                   </TouchableOpacity>
-                  <Animated.Text style={[styles.actionLabel, { color: colors.foreground }]}>
+                  <Animated.Text 
+                    style={[
+                      styles.actionLabel, 
+                      { color: '#FFFFFF', textShadowColor: 'rgba(0,0,0,0.5)', textShadowRadius: 2 }
+                    ]}
+                  >
                     {action.label}
                   </Animated.Text>
                 </Animated.View>
