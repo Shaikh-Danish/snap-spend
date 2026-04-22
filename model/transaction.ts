@@ -1,8 +1,13 @@
-import { Model } from '@nozbe/watermelondb';
+import { Model, Relation } from '@nozbe/watermelondb';
 import { date, field, readonly, relation, text } from '@nozbe/watermelondb/decorators';
 
 export default class Transaction extends Model {
   static table = 'transactions';
+
+  static associations = {
+    categories: { type: 'belongs_to' as const, key: 'category_id' },
+    accounts: { type: 'belongs_to' as const, key: 'account_id' },
+  };
 
   @field('amount') amount!: number;
   @text('category') category!: string;
@@ -15,4 +20,6 @@ export default class Transaction extends Model {
   @readonly @date('created_at') createdAt!: Date;
 
   @relation('accounts', 'account_id') account!: any;
+  @text('category_id') categoryId!: string;
+  @relation('categories', 'category_id') categoryRel!: Relation<any>;
 }

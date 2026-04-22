@@ -63,18 +63,18 @@ const CategoryPickerComponent = ({ selectedId, onSelect, categories }: CategoryP
         {sortedCategories.map(cat => (
           <Pressable
             key={cat.id}
-            onPress={() => onSelect(cat.name)}
+            onPress={() => onSelect(cat.id)}
             className="h-[40px] items-center justify-center"
           >
             <View
               style={{
-                backgroundColor: selectedId === cat.name ? cat.color : `${cat.color}15`,
+                backgroundColor: selectedId === cat.id ? cat.color : `${cat.color}15`,
               }}
               className="px-6 py-2 rounded-md"
             >
               <Text
                 className="text-xs font-bold tracking-tight"
-                style={{ color: selectedId === cat.name ? 'white' : cat.color }}
+                style={{ color: selectedId === cat.id ? 'white' : cat.color }}
               >
                 {cat.name}
               </Text>

@@ -1,21 +1,21 @@
-import React, { useState, useRef, useCallback } from 'react';
+import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import {
-  View,
-  TouchableOpacity,
-  StyleSheet,
+  CameraIcon,
+  ImageIcon,
+  MicIcon,
+  PlusIcon,
+  XIcon,
+} from 'lucide-react-native';
+import React, { useCallback, useRef, useState } from 'react';
+import {
   Animated,
   Dimensions,
   Platform,
+  StyleSheet,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import {
-  PlusIcon,
-  XIcon,
-  MicIcon,
-  CameraIcon,
-  ImageIcon,
-} from 'lucide-react-native';
-import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 
 import { THEME } from '@/lib/theme';
 import { useUniwind } from 'uniwind';
@@ -70,7 +70,7 @@ export function AddNewExpenseFab({
   // Animations
   const overlayAnim = useRef(new Animated.Value(0)).current;
   const fabRotation = useRef(new Animated.Value(0)).current;
-  
+
   // Ensure we have enough animation values for all actions
   const actionAnims = useRef<Animated.Value[]>([]);
   if (actionAnims.current.length !== actions.length) {
@@ -267,9 +267,9 @@ export function AddNewExpenseFab({
                   >
                     {action.icon}
                   </TouchableOpacity>
-                  <Animated.Text 
+                  <Animated.Text
                     style={[
-                      styles.actionLabel, 
+                      styles.actionLabel,
                       { color: '#FFFFFF', textShadowColor: 'rgba(0,0,0,0.5)', textShadowRadius: 2 }
                     ]}
                   >

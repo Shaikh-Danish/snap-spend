@@ -1,7 +1,6 @@
-import { Icon } from '@/components/ui/icon';
 import { Text } from '@/components/ui/text';
 import Wallet from '@/model/wallet';
-import { Plus } from 'lucide-react-native';
+import { Plus, Wallet as WalletIcon } from 'lucide-react-native';
 import { Pressable, View } from 'react-native';
 
 type WalletCardsProps = {
@@ -9,66 +8,71 @@ type WalletCardsProps = {
   onAddPress: () => void;
 };
 
-const CARD_COLORS = [
-  'bg-blue-600',
-  'bg-emerald-600',
-  'bg-zinc-900',
-  'bg-violet-600',
-  'bg-rose-600'
-];
-
 export function WalletCards({ wallets, onAddPress }: WalletCardsProps) {
   return (
-    <View className="mb-2 px-4">
-      <View className="flex-row items-center justify-between mb-4">
-        <Text className="text-lg font-bold">All Accounts</Text>
-        <Pressable onPress={onAddPress} className="flex-row items-center gap-1 bg-secondary px-3 py-1.5 rounded-full">
-          <Icon as={Plus} className="size-4 text-foreground" />
-          <Text className="text-xs font-semibold">Add</Text>
+    <View className="mb-2 px-5">
+      {/* Header */}
+      <View className="flex-row items-center justify-between mb-8">
+        <View>
+          <Text className="text-2xl font-bold text-foreground">Wallets</Text>
+          <Text className="text-sm text-muted-foreground">Manage your money</Text>
+        </View>
+        <Pressable
+          onPress={onAddPress}
+          className="bg-muted w-10 h-10 items-center justify-center rounded-full active:opacity-70"
+        >
+          <Plus size={20} className="text-foreground" strokeWidth={2.5} />
         </Pressable>
       </View>
 
       {!wallets?.length ? (
-        <View className="bg-secondary/20 border border-dashed border-border rounded-3xl p-8 items-center justify-center">
-          <View className="bg-secondary/40 w-16 h-16 rounded-full items-center justify-center mb-4">
-            <Icon as={Plus} className="size-8 text-muted-foreground" />
+        <View className="py-20 items-center justify-center">
+          {/* Minimal Icon centered */}
+          <View className="mb-6 opacity-20">
+            <WalletIcon size={64} className="text-foreground" strokeWidth={1} />
           </View>
-          <Text className="text-base font-bold text-foreground mb-1">No Accounts Yet</Text>
-          <Text className="text-sm text-muted-foreground text-center mb-6">
-            Add your first bank account, credit card, or wallet to start tracking.
+
+          <Text className="text-lg font-bold text-foreground text-center mb-2">
+            No Wallets Added
           </Text>
+          <Text className="text-sm text-muted-foreground text-center px-12 mb-10 leading-5">
+            Add a bank account or cash wallet to start tracking your balances.
+          </Text>
+
           <Pressable
             onPress={onAddPress}
-            className="bg-primary px-6 py-3 rounded-2xl active:opacity-80"
+            className="bg-primary px-10 py-3.5 rounded-xl active:opacity-90"
           >
-            <Text className="text-white font-bold text-sm">Add Primary Account</Text>
+            <Text className="text-primary-foreground font-bold text-sm uppercase tracking-widest">
+              Add Wallet
+            </Text>
           </Pressable>
         </View>
       ) : (
         <View className="gap-4">
-          {wallets.map((wallet, index) => {
-            const colorClass = CARD_COLORS[index % CARD_COLORS.length];
-            return (
-              <View key={wallet.id} className="flex-row items-center justify-between bg-card p-4 rounded-3xl border border-border">
-                <View className="flex-row items-center gap-4">
-                  <View className={`w-12 h-12 rounded-full items-center justify-center ${colorClass}`}>
-                    <Text className="text-white font-extrabold text-xl">{wallet.name.charAt(0)}</Text>
-                  </View>
-                  <View>
-                    <Text className="text-base font-bold text-foreground">
-                      {wallet.name}
-                    </Text>
-                    <Text className="text-xs font-medium text-muted-foreground uppercase mt-0.5">
-                      {wallet.type.replace(/_/g, ' ')} {wallet.walletId ? `• ${wallet.walletId}` : ''}
-                    </Text>
-                  </View>
+          {wallets.map((wallet) => (
+            <View
+              key={wallet.id}
+              className="flex-row items-center justify-between bg-card p-5 rounded-[20px] border border-border shadow-sm"
+            >
+              <View className="flex-row items-center gap-4">
+                <View className="w-12 h-12 rounded-xl bg-muted items-center justify-center">
+                  <Text className="text-foreground font-bold text-lg">{wallet.name.charAt(0)}</Text>
                 </View>
-                <Text className="text-lg font-extrabold tracking-tight text-foreground">
-                  ₹{wallet.balance.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                </Text>
+                <View>
+                  <Text className="text-base font-bold text-foreground">
+                    {wallet.name}
+                  </Text>
+                  <Text className="text-xs text-muted-foreground">
+                    {wallet.type.replace(/_/g, ' ')}
+                  </Text>
+                </View>
               </View>
-            );
-          })}
+              <Text className="text-lg font-bold tracking-tight text-foreground">
+                ₹{wallet.balance.toLocaleString('en-IN')}
+              </Text>
+            </View>
+          ))}
         </View>
       )}
     </View>

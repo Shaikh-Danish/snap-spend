@@ -24,7 +24,7 @@ export default function TabLayout() {
   const { theme } = useUniwind();
 
   useEffect(() => {
-    // clearrAllData();
+    // clearAllData();
   }, []);
 
   return (

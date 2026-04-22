@@ -26,5 +26,15 @@ export default schemaMigrations({
                 },
             ],
         },
+        {
+            toVersion: 4,
+            steps: [
+                {
+                    type: 'add_columns',
+                    table: 'transactions',
+                    columns: [{ name: 'category_id', type: 'string', isIndexed: true, isOptional: true }],
+                },
+            ],
+        },
     ],
 });

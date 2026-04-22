@@ -1,7 +1,7 @@
 import { appSchema, tableSchema } from '@nozbe/watermelondb'
 
 export default appSchema({
-    version: 3,
+    version: 4,
     tables: [
         tableSchema({
             name: 'categories',
@@ -30,6 +30,7 @@ export default appSchema({
                 { name: 'description', type: 'string' },
                 { name: 'type', type: 'string' },
                 { name: 'account_id', type: 'string', isIndexed: true },
+                { name: 'category_id', type: 'string', isIndexed: true, isOptional: true },
                 { name: 'external_id', type: 'string', isOptional: true, isIndexed: true }, // To prevent duplicates
                 { name: 'status', type: 'string' }, // 'pending_ai', 'confirmed', 'excluded'
                 { name: 'date', type: 'number' },

@@ -7,9 +7,9 @@ import React from 'react';
 import { Controller } from 'react-hook-form';
 import { Modal, Platform, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { CategoryPicker } from '../category-picker';
+import { NumericKeypad } from '../numeric-keypad';
 import { AmountDisplay } from './amount-display';
-import { CategoryPicker } from './category-picker';
-import { NumericKeypad } from './numeric-keypad';
 import { useTransactionForm } from './use-transaction-form';
 
 type AddTransactionFormProps = {
@@ -24,11 +24,32 @@ const AddTransactionFormComponent = ({ wallets }: AddTransactionFormProps) => {
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }} edges={['top', 'bottom']}>
       {/* 1. Header */}
       <View className="flex-row items-center justify-between px-6 h-14">
-        <Pressable onPress={() => actions.setValue('type', type === 'expense' ? 'income' : 'expense')} className="p-2">
+        {/* Close Button */}
+        <Pressable onPress={actions.handleCancel} className="p-2 -ml-2">
           <X size={24} color="#635b4b" />
         </Pressable>
-        <Text className="text-foreground font-bold text-[11px] uppercase tracking-[4px]">{type}</Text>
-        <Pressable className="p-2">
+
+        {/* Type Switcher */}
+        <View className="flex-row bg-zinc-100 p-1 rounded-full">
+          <Pressable
+            onPress={() => actions.setValue('type', 'expense')}
+            className={`px-4 py-1.5 rounded-full ${type === 'expense' ? 'bg-white shadow-sm' : ''}`}
+          >
+            <Text className={`text-[10px] font-bold uppercase tracking-wider ${type === 'expense' ? 'text-foreground' : 'text-muted-foreground'}`}>
+              Expense
+            </Text>
+          </Pressable>
+          <Pressable
+            onPress={() => actions.setValue('type', 'income')}
+            className={`px-4 py-1.5 rounded-full ${type === 'income' ? 'bg-white shadow-sm' : ''}`}
+          >
+            <Text className={`text-[10px] font-bold uppercase tracking-wider ${type === 'income' ? 'text-foreground' : 'text-muted-foreground'}`}>
+              Income
+            </Text>
+          </Pressable>
+        </View>
+
+        <Pressable className="p-2 -mr-2">
           <MoreVertical size={24} color="#635b4b" />
         </Pressable>
       </View>
@@ -118,16 +139,16 @@ const AddTransactionFormComponent = ({ wallets }: AddTransactionFormProps) => {
 
       {/* Wallet Selection Modal */}
       <Modal visible={showWalletModal} transparent animationType="fade">
-        <Pressable 
-          className="flex-1 bg-black/40 justify-center px-6" 
+        <Pressable
+          className="flex-1 bg-black/40 justify-center px-6"
           onPress={() => actions.setShowWalletModal(false)}
         >
           <View className="bg-white rounded-2xl p-6">
             <Text className="text-lg font-bold mb-4">Select Wallet</Text>
             <ScrollView className="max-h-[400px]">
               {wallets.map(w => (
-                <TouchableOpacity 
-                  key={w.id} 
+                <TouchableOpacity
+                  key={w.id}
                   onPress={() => {
                     actions.setValue('accountId', w.id);
                     actions.setShowWalletModal(false);

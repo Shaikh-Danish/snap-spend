@@ -1,10 +1,3 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 import { AddWalletForm } from '@/components/wallet/add-wallet-form';
 import RecentActivity from '@/components/wallet/recent-activity';
 import { WalletBalance } from '@/components/wallet/wallet-balance';
@@ -49,20 +42,12 @@ function WalletScreen({ wallets }: WalletScreenProps) {
         </View>
       </ScrollView>
 
-      <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Add Account</DialogTitle>
-            <DialogDescription>
-              Create a new account manually to track balances.
-            </DialogDescription>
-          </DialogHeader>
-          <AddWalletForm
-            onSubmit={handleAddWallet}
-            onCancel={() => setIsAddModalOpen(false)}
-          />
-        </DialogContent>
-      </Dialog>
+      {isAddModalOpen && (
+        <AddWalletForm
+          onSubmit={handleAddWallet}
+          onCancel={() => setIsAddModalOpen(false)}
+        />
+      )}
     </SafeAreaView>
   );
 }

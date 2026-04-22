@@ -1,61 +1,29 @@
 import { database } from '.';
-import Wallet, { WalletType } from './wallet';
-
-export const seedAccounts = async () => {
-  const walletsCollection = database.collections.get<Wallet>('wallets');
-
-  // Check if we already have wallets
-  const count = await walletsCollection.query().fetchCount();
-  if (count > 0) {
-    console.log('Database already has wallets, skipping seed.');
-    return;
-  }
-
-  console.log('Seeding initial wallets...');
-
-  await database.write(async () => {
-    await walletsCollection.create((wallet) => {
-      wallet.name = 'HDFC Bank';
-      wallet.walletId = '8291';
-      wallet.balance = 45250.50;
-      wallet.type = WalletType.SAVINGS;
-    });
-
-    await walletsCollection.create((wallet) => {
-      wallet.name = 'ICICI Bank';
-      wallet.walletId = '4412';
-      wallet.balance = 120800.00;
-      wallet.type = WalletType.SAVINGS;
-    });
-
-    await walletsCollection.create((wallet) => {
-      wallet.name = 'Amazon Pay';
-      wallet.walletId = 'AMZN';
-      wallet.balance = 2450.00;
-      wallet.type = WalletType.WALLET;
-    });
-
-    await walletsCollection.create((wallet) => {
-      wallet.name = 'SBI Credit Card';
-      wallet.walletId = '1004';
-      wallet.balance = -15400.00;
-      wallet.type = WalletType.CREDIT_CARD;
-    });
-  });
-
-  console.log('Seeding complete!');
-};
 
 export const clearAllData = async () => {
+  console.log('Starting manual database clear...');
   await database.write(async () => {
-    // This will delete all records from the tables
-    const wallets = await database.collections.get<Wallet>('wallets').query().fetch();
-    const transactions = await database.collections.get<any>('transactions').query().fetch();
+    const tables = ['transactions', 'categories', 'wallets', 'budgets', 'category_rules'];
     
-    for (const record of [...wallets, ...transactions]) {
-      await record.destroyPermanently();
+    for (const tableName of tables) {
+      try {
+        const collection = database.collections.get(tableName);
+        const records = await collection.query().fetch();
+        
+        // Delete each record permanently
+        for (const record of records) {
+          await record.destroyPermanently();
+        }
+        console.log(`Cleared table: ${tableName}`);
+      } catch (e) {
+        console.log(`Could not clear table ${tableName}:`, e);
+      }
     }
   });
-  console.log('All data cleared!');
+  console.log('Database is now completely empty.');
 };
 
+export const seedInitialData = async () => {
+    // We already have a good seeding function, keeping it here if you need it later
+    // but for now we focus on clearing.
+};

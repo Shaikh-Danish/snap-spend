@@ -1,6 +1,5 @@
 import { Category, database, Transaction, Wallet } from '@/model';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Q } from '@nozbe/watermelondb';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -88,9 +87,15 @@ export const useTransactionForm = (wallets: Wallet[]) => {
     const finalAmount = parseFloat(values.amount);
     try {
       await database.write(async () => {
+        // 1. Fetch the actual category record to get its name
+        const categories = database.collections.get<Category>('categories');
+        const categoryRecord = await categories.find(values.category);
+
+        // 2. Create the transaction with the link
         await database.collections.get<Transaction>('transactions').create((t) => {
           t.amount = values.type === 'expense' ? -finalAmount : finalAmount;
-          t.category = values.category;
+          t.category = categoryRecord.name; // Set the name string
+          t.categoryId = categoryRecord.id; // SET THE ID RELATION!
           t.description = values.note || '';
           t.type = values.type;
           t.status = 'completed';
@@ -98,13 +103,10 @@ export const useTransactionForm = (wallets: Wallet[]) => {
           t.date = values.date;
         });
 
-        const categories = database.collections.get<Category>('categories');
-        const categoryRecords = await categories.query(Q.where('name', values.category)).fetch();
-        if (categoryRecords.length > 0) {
-          await categoryRecords[0].update(c => {
-            c.usageCount += 1;
-          });
-        }
+        // 3. Update the category's usage count
+        await categoryRecord.update(c => {
+          c.usageCount += 1;
+        });
       });
       router.back();
     } catch (error) {
@@ -132,6 +134,7 @@ export const useTransactionForm = (wallets: Wallet[]) => {
       handleDeletePress,
       openDatePicker,
       onSubmit: handleSubmit(onSubmit),
+      handleCancel: () => router.back(),
     },
     control,
   };
