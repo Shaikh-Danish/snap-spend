@@ -140,7 +140,6 @@ export function AddNewExpenseFab({
     if (key === 'manual') {
       navigation.navigate('modal');
     }
-    console.log('Action pressed:', key);
   };
 
   const rotateInterpolation = fabRotation.interpolate({

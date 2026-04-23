@@ -26,8 +26,6 @@ const ActivityScreenComponent = ({
     (t) => typeFilter === 'all' || t.type === typeFilter
   );
 
-  console.log(filteredTransactions);
-
   return (
     <View
       className="flex-1 bg-background"
@@ -54,9 +52,9 @@ const ActivityScreenComponent = ({
               {/* Category-wise Breakdown with individual transactions */}
               <View className="mt-8">
                 {categories.map((category) => (
-                  <CategorySection 
-                    key={category.id} 
-                    category={category} 
+                  <CategorySection
+                    key={category.id}
+                    category={category}
                     typeFilter={typeFilter}
                   />
                 ))}

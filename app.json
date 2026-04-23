@@ -70,7 +70,8 @@
         }
       ],
       "expo-build-properties",
-      "react-native-localize"
+      "react-native-localize",
+      "react-native-litert-lm"
     ],
     "experiments": {
       "typedRoutes": true,

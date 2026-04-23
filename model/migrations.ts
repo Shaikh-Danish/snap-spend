@@ -36,5 +36,28 @@ export default schemaMigrations({
                 },
             ],
         },
+        {
+            toVersion: 5,
+            steps: [
+                createTable({
+                    name: 'chat_threads',
+                    columns: [
+                        { name: 'title', type: 'string' },
+                        { name: 'created_at', type: 'number' },
+                        { name: 'updated_at', type: 'number' },
+                    ],
+                }),
+                createTable({
+                    name: 'chat_messages',
+                    columns: [
+                        { name: 'thread_id', type: 'string', isIndexed: true },
+                        { name: 'role', type: 'string' },
+                        { name: 'content', type: 'string' },
+                        { name: 'created_at', type: 'number' },
+                        { name: 'status', type: 'string', isOptional: true },
+                    ],
+                }),
+            ],
+        },
     ],
 });

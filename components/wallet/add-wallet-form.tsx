@@ -1,36 +1,13 @@
 import { WalletType } from '@/model/wallet';
-import { 
-  Banknote, 
-  Briefcase, 
-  ChevronDown, 
-  CircleDollarSign, 
-  CreditCard, 
-  Lock, 
-  PiggyBank, 
-  TrendingUp, 
-  Wallet as WalletIcon, 
-  X 
-} from 'lucide-react-native';
+import { ChevronDown, Wallet as WalletIcon, X } from 'lucide-react-native';
 import React from 'react';
 import { Controller } from 'react-hook-form';
 import { Modal, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AmountDisplay } from '../add-transaction/amount-display';
 import { NumericKeypad } from '../numeric-keypad';
+import { WALLET_TYPE_ICONS } from './constants';
 import { useWalletForm } from './use-wallet-form';
-
-const TYPE_ICONS: Record<WalletType, any> = {
-  [WalletType.SAVINGS]: PiggyBank,
-  [WalletType.CURRENT]: CircleDollarSign,
-  [WalletType.CREDIT_CARD]: CreditCard,
-  [WalletType.DEBIT_CARD]: CreditCard,
-  [WalletType.MUTUAL_FUNDS]: TrendingUp,
-  [WalletType.STOCKS]: TrendingUp,
-  [WalletType.BONDS]: Briefcase,
-  [WalletType.CASH]: Banknote,
-  [WalletType.WALLET]: WalletIcon,
-  [WalletType.FIXED_DEPOSIT]: Lock,
-};
 
 type AddWalletFormProps = {
   onCancel: () => void;
@@ -41,7 +18,7 @@ export const AddWalletForm = ({ onCancel, onSubmit }: AddWalletFormProps) => {
   const { state, actions, control } = useWalletForm({ onSuccess: onCancel });
   const { balance, type, name, walletId, isTypeModalOpen, errors } = state;
 
-  const CurrentIcon = TYPE_ICONS[type] || WalletIcon;
+  const CurrentIcon = WALLET_TYPE_ICONS[type] || WalletIcon;
 
   return (
     <Modal visible transparent={false} animationType="slide">
@@ -146,9 +123,8 @@ export const AddWalletForm = ({ onCancel, onSubmit }: AddWalletFormProps) => {
           <View className="px-6 py-6 border-t border-zinc-50">
             <Pressable
               onPress={actions.onSubmit}
-              className={`py-4.5 rounded-[20px] items-center justify-center ${
-                name && walletId ? 'bg-primary' : 'bg-zinc-100 opacity-50'
-              }`}
+              className={`py-4.5 rounded-[20px] items-center justify-center ${name && walletId ? 'bg-primary' : 'bg-zinc-100 opacity-50'
+                }`}
             >
               <Text className="text-primary-foreground text-sm font-black uppercase tracking-[3px]">
                 Connect Wallet
@@ -169,7 +145,7 @@ export const AddWalletForm = ({ onCancel, onSubmit }: AddWalletFormProps) => {
               <ScrollView className="max-h-[400px]">
                 <View className="flex-row flex-wrap gap-3">
                   {Object.values(WalletType).map((wType) => {
-                    const TypeIcon = TYPE_ICONS[wType] || WalletIcon;
+                    const TypeIcon = WALLET_TYPE_ICONS[wType] || WalletIcon;
                     const isSelected = type === wType;
                     return (
                       <TouchableOpacity
@@ -178,9 +154,8 @@ export const AddWalletForm = ({ onCancel, onSubmit }: AddWalletFormProps) => {
                           actions.setValue('type', wType);
                           actions.setShowTypeModal(false);
                         }}
-                        className={`flex-row items-center gap-3 px-5 py-4 rounded-2xl border ${
-                          isSelected ? 'bg-primary border-primary' : 'bg-zinc-50 border-zinc-100'
-                        }`}
+                        className={`flex-row items-center gap-3 px-5 py-4 rounded-2xl border ${isSelected ? 'bg-primary border-primary' : 'bg-zinc-50 border-zinc-100'
+                          }`}
                       >
                         <TypeIcon size={18} color={isSelected ? 'white' : '#27272a'} />
                         <Text className={`font-bold text-xs capitalize ${isSelected ? 'text-white' : 'text-foreground'}`}>
