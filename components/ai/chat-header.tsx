@@ -1,19 +1,27 @@
-import { Text } from '@/components/ui/text';
-import { SquarePen } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
+import { ChevronLeft, SquarePen } from 'lucide-react-native';
 import React from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 export function ChatHeader() {
+  const router = useRouter();
+
   return (
     <View className="flex-row items-center justify-between px-6 py-4 bg-background">
-      <Pressable className="p-2 -ml-2 active:opacity-50">
-        <SquarePen size={22} className="text-foreground" strokeWidth={1.5} />
-      </Pressable>
+      <View className="flex-row items-center gap-2">
+        <Pressable
+          onPress={() => router.navigate('/(tabs)')}
+          className="w-10 h-10 items-center justify-center rounded-full active:bg-muted/20"
+        >
+          <ChevronLeft size={24} className="text-foreground" strokeWidth={2} />
+        </Pressable>
 
-      <Text className="text-lg font-black text-foreground tracking-tight">Snap AI</Text>
+      </View>
 
-      <Pressable className="bg-foreground px-4 py-1.5 rounded-full active:opacity-80">
-        <Text className="text-background text-[11px] font-black uppercase tracking-wider">Sign In</Text>
+      <Text className="text-xl font-bold tracking-tight text-foreground">Snap AI</Text>
+
+      <Pressable className="w-10 h-10 items-center justify-center rounded-full active:bg-muted/20">
+        <SquarePen size={22} className="text-foreground" strokeWidth={1.8} />
       </Pressable>
     </View>
   );

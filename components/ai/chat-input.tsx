@@ -1,9 +1,11 @@
-import { Plus, ArrowUp } from 'lucide-react-native';
+import { ArrowUp, Plus } from 'lucide-react-native';
 import React, { useState } from 'react';
-import { Pressable, TextInput, View, KeyboardAvoidingView, Platform } from 'react-native';
+import { Pressable, TextInput, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export function ChatInput({ onSend }: { onSend: (text: string) => void }) {
   const [text, setText] = useState('');
+  const insets = useSafeAreaInsets();
 
   const handleSend = () => {
     if (text.trim()) {
@@ -13,13 +15,16 @@ export function ChatInput({ onSend }: { onSend: (text: string) => void }) {
   };
 
   return (
-    <View className="px-6 py-4 bg-background">
+    <View
+      className="px-6 pt-3 bg-background border-t border-border/5 shadow-2xl shadow-black/5"
+      style={{ paddingBottom: Math.max(insets.bottom, 16) }}
+    >
       <View className="flex-row items-center gap-3">
-        <Pressable className="w-11 h-11 items-center justify-center bg-muted/40 rounded-full active:scale-90 transition-transform">
-          <Plus size={20} className="text-foreground" strokeWidth={2.5} />
+        <Pressable className="w-12 h-12 items-center justify-center bg-muted/30 rounded-full active:scale-95 transition-all">
+          <Plus size={24} className="text-foreground" strokeWidth={2.5} />
         </Pressable>
-        
-        <View className="flex-1 flex-row items-center bg-muted/20 border border-border/40 rounded-[24px] px-4 py-2 min-h-[48px]">
+
+        <View className="flex-1 flex-row items-center bg-muted/20 border border-border/10 rounded-[28px] px-5 py-1.5 min-h-[52px]">
           <TextInput
             placeholder="Ask Anything"
             placeholderTextColor="#A6A095"
@@ -28,15 +33,15 @@ export function ChatInput({ onSend }: { onSend: (text: string) => void }) {
             onChangeText={setText}
             multiline
           />
-          
-          {text.length > 0 && (
-            <Pressable 
-              onPress={handleSend}
-              className="bg-foreground w-8 h-8 items-center justify-center rounded-full ml-2 active:opacity-80"
-            >
-              <ArrowUp size={18} className="text-background" strokeWidth={3} />
-            </Pressable>
-          )}
+
+          <Pressable
+            onPress={handleSend}
+            disabled={!text.trim()}
+            className={`w-9 h-9 items-center justify-center rounded-full ml-1 active:scale-90 transition-all ${text.trim() ? 'bg-foreground' : 'bg-muted/40'
+              }`}
+          >
+            <ArrowUp size={20} className={text.trim() ? 'text-background' : 'text-muted-foreground'} strokeWidth={3} />
+          </Pressable>
         </View>
       </View>
     </View>

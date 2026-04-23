@@ -35,6 +35,13 @@ export function AddNewExpenseFab({
   descriptors,
   navigation,
 }: BottomTabBarProps) {
+  const focusedOptions = descriptors[state.routes[state.index].key].options;
+
+  // Completely hide the tab bar if display: 'none' is set in options
+  if (focusedOptions.tabBarStyle?.display === 'none') {
+    return null;
+  }
+
   const insets = useSafeAreaInsets();
   const colors = useColors();
   const [menuOpen, setMenuOpen] = useState(false);

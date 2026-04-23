@@ -1,5 +1,5 @@
 import { Text } from '@/components/ui/text';
-import { Sparkles, BrainCircuit, Wallet, BarChart3 } from 'lucide-react-native';
+import { BarChart3, BrainCircuit, Wallet } from 'lucide-react-native';
 import React from 'react';
 import { Pressable, View } from 'react-native';
 
@@ -13,12 +13,12 @@ export function EmptyState({ onSelectSuggestion }: { onSelectSuggestion: (text: 
   return (
     <View className="flex-1 items-center justify-center px-8">
       {/* Central Logo / Icon */}
-      <View className="mb-12 opacity-10">
+      {/* <View className="mb-12 opacity-10">
         <Sparkles size={80} className="text-foreground" strokeWidth={1} />
-      </View>
+      </View> */}
 
       {/* Suggestion Pills */}
-      <View className="w-full gap-3 mt-12 items-start">
+      <View className="w-full gap-3 items-start">
         {SUGGESTIONS.map((item, index) => (
           <Pressable
             key={index}

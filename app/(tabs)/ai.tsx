@@ -1,14 +1,12 @@
 import { ChatHeader } from '@/components/ai/chat-header';
-import { ChatInput } from '@/components/ai/chat-input';
-import { EmptyState } from '@/components/ai/empty-state';
-import { MessageBubble } from '@/components/ai/message-bubble';
 import { database } from '@/model';
 import ChatMessage from '@/model/chat-message';
 import ChatThread from '@/model/chat-thread';
+import { LegendList } from "@legendapp/list";
 import { Q } from '@nozbe/watermelondb';
 import withObservables from '@nozbe/with-observables';
 import React, { useRef } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { map, of, switchMap } from 'rxjs';
 
@@ -17,25 +15,29 @@ interface AiScreenProps {
   messages: ChatMessage[];
 }
 
+const items = [
+  { id: "1", title: "Item 1" },
+  { id: "2", title: "Item 2" },
+  { id: "3", title: "Item 3" },
+];
+
 const AiScreenContent = ({ thread, messages }: AiScreenProps) => {
-  const scrollViewRef = useRef<ScrollView>(null);
+  const listRef = useRef<any>(null);
 
   const handleSend = async (text: string) => {
     try {
       let activeThread = thread;
 
-      // Create thread if it doesn't exist
       if (!activeThread) {
         await database.write(async () => {
           activeThread = await database.get<ChatThread>('chat_threads').create((t) => {
-            t.title = text.slice(0, 50); // Set title from first message
+            t.title = text.slice(0, 50);
           });
         });
       }
 
       if (!activeThread) return;
 
-      // Save User Message
       await database.write(async () => {
         await database.get<ChatMessage>('chat_messages').create((m) => {
           m.thread.set(activeThread!);
@@ -45,7 +47,6 @@ const AiScreenContent = ({ thread, messages }: AiScreenProps) => {
         });
       });
 
-      // Simulate AI response (You'll replace this with actual API call)
       setTimeout(async () => {
         await database.write(async () => {
           await database.get<ChatMessage>('chat_messages').create((m) => {
@@ -62,32 +63,46 @@ const AiScreenContent = ({ thread, messages }: AiScreenProps) => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={['top']}>
+    <SafeAreaView className="flex-1 bg-background" style={{ flex: 1 }} edges={['top']}>
+      <ChatHeader />
+
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
       >
-        <ChatHeader />
-
-        <View className="flex-1">
+        {/* <View className="flex-1">
           {messages.length === 0 ? (
             <EmptyState onSelectSuggestion={handleSend} />
-          ) : (
-            <ScrollView
-              ref={scrollViewRef}
-              className="flex-1 px-6 pt-4"
-              onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
-              showsVerticalScrollIndicator={false}
-            >
-              {messages.map((msg) => (
-                <MessageBubble key={msg.id} message={msg.content} isUser={msg.role === 'user'} />
-              ))}
-              <View className="h-10" />
-            </ScrollView>
+          ) : ( */}
+        <LegendList
+          data={items}
+          renderItem={({ item }) => <Text>{item.title}</Text>}
+          keyExtractor={(item) => item.id}
+          recycleItems
+        />
+        {/* <LegendList
+          ref={listRef}
+          data={messages}
+          renderItem={({ item: msg }) => (
+            <MessageBubble 
+              message={msg.content} 
+              isUser={msg.role === 'user'} 
+            />
           )}
+          keyExtractor={(msg) => msg.id}
+          contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: 24 }}
+          recycleItems
+          onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: true })}
+        /> */}
+        {/* )} */}
+        {/* </View> */}
+
+        <View>
+          <TextInput placeholder='Ask Anything...' placeholderTextColor="#A6A095" />
         </View>
 
-        <ChatInput onSend={handleSend} />
+        {/* <ChatInput onSend={handleSend} /> */}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );

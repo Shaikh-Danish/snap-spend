@@ -2,7 +2,7 @@ import '@/global.css';
 
 import { ThemeProvider } from '@react-navigation/native';
 import { PortalHost } from '@rn-primitives/portal';
-import { Tabs } from 'expo-router';
+import { Tabs, usePathname } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { ArrowLeftRightIcon, HomeIcon, SparklesIcon, Wallet2Icon } from 'lucide-react-native';
 import { useUniwind } from 'uniwind';
@@ -22,6 +22,7 @@ export const unstable_settings = {
 
 export default function TabLayout() {
   const { theme } = useUniwind();
+  const pathname = usePathname();
 
   useEffect(() => {
     // clearAllData();
@@ -36,6 +37,7 @@ export default function TabLayout() {
           screenOptions={{
             headerShown: false,
             tabBarStyle: {
+              display: pathname === '/ai' ? 'none' : 'flex',
               position: "absolute",
               bottom: 14,
               left: 14,
