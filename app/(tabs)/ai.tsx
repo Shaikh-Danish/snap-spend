@@ -2,7 +2,7 @@ import { ChatHeader } from '@/components/ai/chat-header';
 import { ChatView } from '@/components/ai/chat-view';
 import { ModelLoader } from '@/components/ai/model-loader';
 import { ChatService } from '@/lib/ai/chat-service';
-import { getModelInfo } from '@/lib/ai/model-info';
+import { useAI } from '@/lib/ai/llm-service';
 import { database } from '@/model';
 import ChatMessage from '@/model/chat-message';
 import ChatThread from '@/model/chat-thread';
@@ -10,7 +10,6 @@ import { Q } from '@nozbe/watermelondb';
 import withObservables from '@nozbe/with-observables';
 import React, { useState } from 'react';
 import { Text, View } from 'react-native';
-import { GEMMA_4_E2B_IT, useModel } from 'react-native-litert-lm';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { map, of, switchMap } from 'rxjs';
 
@@ -26,110 +25,86 @@ interface AiScreenProps {
 const AiScreenContent = ({ thread, messages }: AiScreenProps) => {
   const [streamingText, setStreamingText] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [hasStartedDownload, setHasStartedDownload] = useState(false);
 
-  const { model, isReady, downloadProgress, error, load } = useModel(
-    GEMMA_4_E2B_IT,
-    {
-      backend: 'gpu',
-      autoLoad: false,
-    }
-  );
-
-  const startDownload = async () => {
-    setHasStartedDownload(true);
-    await load();
-  };
-
-  // ── Send handler ─────────────────────────────────────────────────────────────
+  const {
+    isReady,
+    isDownloading,
+    progress,
+    error,
+    modelInfo,
+    load,
+    sendMessage,
+  } = useAI();
 
   const handleSend = async (text: string) => {
-    if (!isReady || !model || isGenerating) return;
+    if (!text.trim() || isGenerating) return;
+
+    setIsGenerating(true);
+    setStreamingText('');
 
     try {
-      setIsGenerating(true);
-
       // 1. Get or create thread
       const activeThread = await ChatService.getOrCreateThread(thread, text);
 
-      // 2. Persist user message
+      // 2. Add user message
       await ChatService.saveMessage(activeThread, text, 'user');
 
-      // 3. Stream Gemma response
+      // 3. Stream AI response
       let fullResponse = '';
-      setStreamingText('');
-
-      await new Promise<void>((resolve, reject) => {
-        try {
-          model.sendMessageAsync(text, (token, done) => {
-            fullResponse += token;
-            setStreamingText(fullResponse);
-            if (done) resolve();
-          });
-        } catch (err) {
-          reject(err);
-        }
+      await sendMessage(text, (token) => {
+        fullResponse += token;
+        setStreamingText(fullResponse);
       });
 
-      // 4. Persist completed assistant message
+      // 4. Save AI response
       await ChatService.saveMessage(activeThread, fullResponse, 'assistant');
       setStreamingText('');
     } catch (err) {
-      console.error('Failed to send message:', err);
+      console.error('Chat error:', err);
     } finally {
       setIsGenerating(false);
     }
   };
 
-  // ── Render Logic ─────────────────────────────────────────────────────────────
-
-  const isDownloading = downloadProgress !== undefined && downloadProgress < 1;
-
-  const renderContent = () => {
-    if (error) {
-      return (
-        <View className="flex-1 items-center justify-center bg-background px-8">
-          <Text className="text-2xl mb-3">⚠️</Text>
-          <Text className="text-base font-semibold text-destructive text-center mb-1">
-            Failed to load model
+  if (error && !isReady) {
+    return (
+      <SafeAreaView className="flex-1 bg-background p-8 items-center justify-center">
+        <View className="items-center gap-4">
+          <Text className="text-xl font-bold text-destructive">
+            Critical System Error
           </Text>
           <Text className="text-sm text-muted-foreground text-center">
             {error}
           </Text>
         </View>
-      );
-    }
+      </SafeAreaView>
+    );
+  }
 
-    if (!isReady) {
-      const modelInfo = getModelInfo(GEMMA_4_E2B_IT);
-      return (
-        <ModelLoader
-          onDownload={startDownload}
-          isDownloading={hasStartedDownload}
-          progress={downloadProgress || 0}
-          size={modelInfo.size}
-          name={modelInfo.name}
-          description={modelInfo.description}
-        />
-      );
-    }
-
+  if (!isReady) {
     return (
-      <ChatView
-        messages={messages}
-        streamingText={streamingText}
-        isGenerating={isGenerating}
-        onSend={handleSend}
-        isReady={isReady}
+      <ModelLoader
+        onDownload={load}
+        isDownloading={isDownloading}
+        progress={progress}
+        size={modelInfo.size}
+        name={modelInfo.name}
+        description={modelInfo.description}
       />
     );
-  };
+  }
 
   return (
     <View className="flex-1 bg-background">
       <SafeAreaView edges={['top']} className="bg-background" />
       <ChatHeader />
-      {renderContent()}
+      <ChatView
+        isReady={isReady}
+        messages={messages}
+        streamingText={streamingText}
+        isGenerating={isGenerating}
+        onSend={handleSend}
+      />
     </View>
   );
 };

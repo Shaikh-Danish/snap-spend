@@ -11,11 +11,26 @@ import schema from './schema';
 import Transaction from './transaction';
 import Wallet from './wallet';
 
+import { Platform, NativeModules } from 'react-native';
+import Constants, { ExecutionEnvironment } from 'expo-constants';
+
+const isExpoGo = Constants.executionEnvironment === ExecutionEnvironment.StoreClient;
+const hasNativeModule = !!NativeModules.WatermelonDB;
+
+if (isExpoGo) {
+    console.warn(
+        '⚠️ WatermelonDB Warning: You are running in Expo Go. ' +
+        'WatermelonDB REQUIRES a Development Build (custom dev client) to function. ' +
+        'Please run `pnpm android` and use the installed "SnapSpend" app instead.'
+    );
+}
+
 const adapter = new SQLiteAdapter({
     dbName: 'snap_spend',
     schema,
     migrations,
-    jsi: true,
+    // only enabled JSI if we are NOT in Expo Go and have the native module
+    jsi: !isExpoGo && hasNativeModule, 
     onSetUpError: error => {
         console.error('Database setup error:', error);
     },

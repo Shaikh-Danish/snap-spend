@@ -55,18 +55,18 @@ export function ModelLoader({
   }
 
   return (
-    <View className="flex-1 bg-background px-8 pt-12 pb-8 justify-between">
+    <View className="flex-1 bg-background px-8 pt-14 pb-10 justify-between">
       <View className="items-center">
         {/* Top Section */}
-        <View className="items-center gap-4 mb-4">
-          <View className="w-16 h-16 items-center justify-center bg-card rounded-md border border-border mt-4">
+        <View className="items-center gap-3 mb-4">
+          <View className="w-16 h-16 items-center justify-center bg-card rounded-md border border-border shadow-sm">
             <Brain size={32} className="text-primary" strokeWidth={1.5} />
           </View>
-          <View className="items-center gap-1">
-            <Text className="text-3xl font-black text-foreground text-center tracking-tighter uppercase">
+          <View className="items-center gap-0.5">
+            <Text className="text-2xl font-black text-foreground text-center tracking-tighter uppercase">
               {name}
             </Text>
-            <Text className="text-sm text-muted-foreground text-center leading-5 px-6">
+            <Text className="text-[13px] text-muted-foreground text-center leading-5 px-4 font-medium opacity-80">
               {description}
             </Text>
           </View>
@@ -74,26 +74,18 @@ export function ModelLoader({
 
         {/* Feature Cards */}
         <View className="w-full flex-row gap-3 mt-4">
-          <View className="flex-1 bg-card p-4 rounded-md border border-border items-start gap-2">
-            <Cpu size={16} className="text-primary" />
+          <View className="flex-1 bg-card p-4 rounded-md border border-border items-start gap-1.5 shadow-xs">
+            <Cpu size={16} className="text-primary" strokeWidth={2.5} />
             <View>
-              <Text className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-0.5">
-                Engine
-              </Text>
-              <Text className="text-xs font-bold text-foreground">
-                {name}
-              </Text>
+              <Text className="text-[9px] font-black text-muted-foreground uppercase tracking-widest opacity-60">Engine</Text>
+              <Text className="text-[11px] font-bold text-foreground">{name}</Text>
             </View>
           </View>
-          <View className="flex-1 bg-card p-4 rounded-md border border-border items-start gap-2">
-            <ShieldCheck size={16} className="text-primary" />
+          <View className="flex-1 bg-card p-4 rounded-md border border-border items-start gap-1.5 shadow-xs">
+            <ShieldCheck size={16} className="text-primary" strokeWidth={2.5} />
             <View>
-              <Text className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-0.5">
-                Privacy
-              </Text>
-              <Text className="text-xs font-bold text-foreground">
-                100% Local
-              </Text>
+              <Text className="text-[9px] font-black text-muted-foreground uppercase tracking-widest opacity-60">Security</Text>
+              <Text className="text-[11px] font-bold text-foreground">100% Local</Text>
             </View>
           </View>
         </View>
@@ -103,21 +95,21 @@ export function ModelLoader({
       <View className="w-full gap-4">
         <Pressable
           onPress={onDownload}
-          className="bg-primary h-14 rounded-md items-center justify-center shadow-lg shadow-primary/30 active:opacity-90"
+          className="bg-primary h-14 rounded-md items-center justify-center shadow-lg shadow-primary/20 active:opacity-95"
         >
           <View className="flex-row items-center gap-3">
             <Download
               size={18}
               className="text-primary-foreground"
-              strokeWidth={2.5}
+              strokeWidth={3}
             />
-            <Text className="text-primary-foreground font-bold text-base uppercase">
-              Download Engine ({size})
+            <Text className="text-primary-foreground font-bold text-base uppercase tracking-tight">
+              Activate Engine ({size})
             </Text>
           </View>
         </Pressable>
-        <Text className="text-[9px] text-muted-foreground text-center uppercase font-black tracking-widest">
-          Secure Wi-Fi Recommended
+        <Text className="text-[10px] text-muted-foreground text-center uppercase font-black tracking-[0.1em] opacity-40">
+          Secure Wi-Fi Connection Recommended
         </Text>
       </View>
     </View>
