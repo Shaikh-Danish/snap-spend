@@ -18,15 +18,16 @@ export function EmptyState({ onSelectSuggestion }: { onSelectSuggestion: (text: 
       </View> */}
 
       {/* Suggestion Pills */}
-      <View className="w-full gap-3 items-start">
+      <View className="w-full gap-3 items-stretch">
+        <Text className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2 px-1">Suggested Inquiries</Text>
         {SUGGESTIONS.map((item, index) => (
           <Pressable
             key={index}
             onPress={() => onSelectSuggestion(item.label)}
-            className="flex-row items-center gap-3 bg-muted/20 border border-border/40 px-5 py-4 rounded-[24px] active:scale-[0.98] transition-transform"
+            className="flex-row items-center gap-3 bg-card border border-border px-5 py-4 rounded-md active:bg-muted shadow-xs"
           >
-            <item.icon size={16} className="text-muted-foreground" />
-            <Text className="text-sm font-medium text-foreground/80">{item.label}</Text>
+            <item.icon size={16} className="text-primary" strokeWidth={2.5} />
+            <Text className="text-sm font-bold text-foreground/90">{item.label}</Text>
           </Pressable>
         ))}
       </View>

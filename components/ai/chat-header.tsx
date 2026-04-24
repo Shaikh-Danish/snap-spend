@@ -7,21 +7,26 @@ export function ChatHeader() {
   const router = useRouter();
 
   return (
-    <View className="flex-row items-center justify-between px-6 py-4 bg-background">
+    <View className="flex-row items-center justify-between px-6 py-4 bg-background border-b border-border">
       <View className="flex-row items-center gap-2">
         <Pressable
           onPress={() => router.navigate('/(tabs)')}
-          className="w-10 h-10 items-center justify-center rounded-full active:bg-muted/20"
+          className="w-10 h-10 items-center justify-center rounded-md border border-border bg-card shadow-xs active:bg-muted"
         >
-          <ChevronLeft size={24} className="text-foreground" strokeWidth={2} />
+          <ChevronLeft size={20} className="text-foreground" strokeWidth={2.5} />
         </Pressable>
-
       </View>
 
-      <Text className="text-xl font-bold tracking-tight text-foreground">Snap AI</Text>
+      <View className="items-center">
+        <Text className="text-lg font-black tracking-tight text-foreground uppercase">Snap AI</Text>
+        <View className="flex-row items-center gap-1">
+          <View className="w-1.5 h-1.5 rounded-full bg-primary" />
+          <Text className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Local Engine</Text>
+        </View>
+      </View>
 
-      <Pressable className="w-10 h-10 items-center justify-center rounded-full active:bg-muted/20">
-        <SquarePen size={22} className="text-foreground" strokeWidth={1.8} />
+      <Pressable className="w-10 h-10 items-center justify-center rounded-md border border-border bg-card shadow-xs active:bg-muted">
+        <SquarePen size={18} className="text-foreground" strokeWidth={2} />
       </Pressable>
     </View>
   );

@@ -1,125 +1,153 @@
 import { ChatHeader } from '@/components/ai/chat-header';
-import { ChatInput } from '@/components/ai/chat-input';
-import { EmptyState } from '@/components/ai/empty-state';
-import { MessageBubble } from '@/components/ai/message-bubble';
+import { ChatView } from '@/components/ai/chat-view';
+import { ModelLoader } from '@/components/ai/model-loader';
+import { ChatService } from '@/lib/ai/chat-service';
+import { getModelInfo } from '@/lib/ai/model-info';
 import { database } from '@/model';
 import ChatMessage from '@/model/chat-message';
 import ChatThread from '@/model/chat-thread';
-import { LegendList } from "@legendapp/list";
 import { Q } from '@nozbe/watermelondb';
 import withObservables from '@nozbe/with-observables';
-import React, { useRef } from 'react';
-import { KeyboardAvoidingView, Platform, View } from 'react-native';
+import React, { useState } from 'react';
+import { Text, View } from 'react-native';
+import { GEMMA_4_E2B_IT, useModel } from 'react-native-litert-lm';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { map, of, switchMap } from 'rxjs';
+
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface AiScreenProps {
   thread: ChatThread | null;
   messages: ChatMessage[];
 }
 
-const items = [
-  { id: "1", title: "Item 1" },
-  { id: "2", title: "Item 2" },
-  { id: "3", title: "Item 3" },
-];
+// ─── Main Screen ──────────────────────────────────────────────────────────────
 
 const AiScreenContent = ({ thread, messages }: AiScreenProps) => {
-  const listRef = useRef<any>(null);
+  const [streamingText, setStreamingText] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [hasStartedDownload, setHasStartedDownload] = useState(false);
+
+  const { model, isReady, downloadProgress, error, load } = useModel(
+    GEMMA_4_E2B_IT,
+    {
+      backend: 'gpu',
+      autoLoad: false,
+    }
+  );
+
+  const startDownload = async () => {
+    setHasStartedDownload(true);
+    await load();
+  };
+
+  // ── Send handler ─────────────────────────────────────────────────────────────
 
   const handleSend = async (text: string) => {
+    if (!isReady || !model || isGenerating) return;
+
     try {
-      let activeThread = thread;
+      setIsGenerating(true);
 
-      if (!activeThread) {
-        await database.write(async () => {
-          activeThread = await database.get<ChatThread>('chat_threads').create((t) => {
-            t.title = text.slice(0, 50);
+      // 1. Get or create thread
+      const activeThread = await ChatService.getOrCreateThread(thread, text);
+
+      // 2. Persist user message
+      await ChatService.saveMessage(activeThread, text, 'user');
+
+      // 3. Stream Gemma response
+      let fullResponse = '';
+      setStreamingText('');
+
+      await new Promise<void>((resolve, reject) => {
+        try {
+          model.sendMessageAsync(text, (token, done) => {
+            fullResponse += token;
+            setStreamingText(fullResponse);
+            if (done) resolve();
           });
-        });
-      }
-
-      if (!activeThread) return;
-
-      await database.write(async () => {
-        await database.get<ChatMessage>('chat_messages').create((m) => {
-          m.thread.set(activeThread!);
-          m.content = text;
-          m.role = 'user';
-          m.status = 'sent';
-        });
+        } catch (err) {
+          reject(err);
+        }
       });
 
-      setTimeout(async () => {
-        await database.write(async () => {
-          await database.get<ChatMessage>('chat_messages').create((m) => {
-            m.thread.set(activeThread!);
-            m.content = "I'm your Snap AI assistant. I've recorded your message properly in my local history. I can help you analyze your spending or manage your wallets!";
-            m.role = 'assistant';
-            m.status = 'sent';
-          });
-        });
-      }, 1000);
-    } catch (error) {
-      console.error('Failed to send message:', error);
+      // 4. Persist completed assistant message
+      await ChatService.saveMessage(activeThread, fullResponse, 'assistant');
+      setStreamingText('');
+    } catch (err) {
+      console.error('Failed to send message:', err);
+    } finally {
+      setIsGenerating(false);
     }
+  };
+
+  // ── Render Logic ─────────────────────────────────────────────────────────────
+
+  const isDownloading = downloadProgress !== undefined && downloadProgress < 1;
+
+  const renderContent = () => {
+    if (error) {
+      return (
+        <View className="flex-1 items-center justify-center bg-background px-8">
+          <Text className="text-2xl mb-3">⚠️</Text>
+          <Text className="text-base font-semibold text-destructive text-center mb-1">
+            Failed to load model
+          </Text>
+          <Text className="text-sm text-muted-foreground text-center">
+            {error}
+          </Text>
+        </View>
+      );
+    }
+
+    if (!isReady) {
+      const modelInfo = getModelInfo(GEMMA_4_E2B_IT);
+      return (
+        <ModelLoader
+          onDownload={startDownload}
+          isDownloading={hasStartedDownload}
+          progress={downloadProgress || 0}
+          size={modelInfo.size}
+          name={modelInfo.name}
+          description={modelInfo.description}
+        />
+      );
+    }
+
+    return (
+      <ChatView
+        messages={messages}
+        streamingText={streamingText}
+        isGenerating={isGenerating}
+        onSend={handleSend}
+        isReady={isReady}
+      />
+    );
   };
 
   return (
     <View className="flex-1 bg-background">
       <SafeAreaView edges={['top']} className="bg-background" />
       <ChatHeader />
-
-      <KeyboardAvoidingView
-        className="flex-1"
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-        style={{ flex: 1 }}
-      >
-        <View className="flex-1">
-          {/* Scrollable Content / Empty State Area */}
-          <View className="flex-1">
-            {messages.length === 0 ? (
-              <EmptyState onSelectSuggestion={handleSend} />
-            ) : (
-              <LegendList
-                ref={listRef}
-                data={messages}
-                renderItem={({ item: msg }) => (
-                  <MessageBubble
-                    message={msg.content}
-                    isUser={msg.role === 'user'}
-                  />
-                )}
-                keyExtractor={(msg) => msg.id}
-                contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: 24 }}
-                recycleItems
-                onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: true })}
-              />
-            )}
-          </View>
-
-          {/* Bottom Input Area */}
-          <ChatInput onSend={handleSend} />
-        </View>
-      </KeyboardAvoidingView>
+      {renderContent()}
     </View>
-
   );
 };
 
+// ─── WatermelonDB observer ────────────────────────────────────────────────────
+
 const enhance = withObservables([], () => {
-  const threadsQuery = database.get<ChatThread>('chat_threads').query(Q.sortBy('updated_at', Q.desc), Q.take(1));
+  const threadsQuery = database
+    .get<ChatThread>('chat_threads')
+    .query(Q.sortBy('updated_at', Q.desc), Q.take(1));
 
   return {
-    thread: threadsQuery.observe().pipe(map(t => t[0] || null)),
+    thread: threadsQuery.observe().pipe(map((t) => t[0] || null)),
     messages: threadsQuery.observe().pipe(
-      switchMap(t => {
-        if (t[0]) {
-          return t[0].messages.observe();
-        }
+      switchMap((t) => {
+        if (t[0]) return t[0].messages.observe();
         return of([]);
-      })
+      }),
     ),
   };
 });
