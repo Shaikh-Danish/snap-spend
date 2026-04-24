@@ -1,4 +1,7 @@
 import { ChatHeader } from '@/components/ai/chat-header';
+import { ChatInput } from '@/components/ai/chat-input';
+import { EmptyState } from '@/components/ai/empty-state';
+import { MessageBubble } from '@/components/ai/message-bubble';
 import { database } from '@/model';
 import ChatMessage from '@/model/chat-message';
 import ChatThread from '@/model/chat-thread';
@@ -6,7 +9,7 @@ import { LegendList } from "@legendapp/list";
 import { Q } from '@nozbe/watermelondb';
 import withObservables from '@nozbe/with-observables';
 import React, { useRef } from 'react';
-import { KeyboardAvoidingView, Platform, Text, TextInput, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { map, of, switchMap } from 'rxjs';
 
@@ -63,48 +66,45 @@ const AiScreenContent = ({ thread, messages }: AiScreenProps) => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background" style={{ flex: 1 }} edges={['top']}>
+    <View className="flex-1 bg-background">
+      <SafeAreaView edges={['top']} className="bg-background" />
       <ChatHeader />
 
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
+        className="flex-1"
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+        style={{ flex: 1 }}
       >
-        {/* <View className="flex-1">
-          {messages.length === 0 ? (
-            <EmptyState onSelectSuggestion={handleSend} />
-          ) : ( */}
-        <LegendList
-          data={items}
-          renderItem={({ item }) => <Text>{item.title}</Text>}
-          keyExtractor={(item) => item.id}
-          recycleItems
-        />
-        {/* <LegendList
-          ref={listRef}
-          data={messages}
-          renderItem={({ item: msg }) => (
-            <MessageBubble 
-              message={msg.content} 
-              isUser={msg.role === 'user'} 
-            />
-          )}
-          keyExtractor={(msg) => msg.id}
-          contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: 24 }}
-          recycleItems
-          onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: true })}
-        /> */}
-        {/* )} */}
-        {/* </View> */}
+        <View className="flex-1">
+          {/* Scrollable Content / Empty State Area */}
+          <View className="flex-1">
+            {messages.length === 0 ? (
+              <EmptyState onSelectSuggestion={handleSend} />
+            ) : (
+              <LegendList
+                ref={listRef}
+                data={messages}
+                renderItem={({ item: msg }) => (
+                  <MessageBubble
+                    message={msg.content}
+                    isUser={msg.role === 'user'}
+                  />
+                )}
+                keyExtractor={(msg) => msg.id}
+                contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: 24 }}
+                recycleItems
+                onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: true })}
+              />
+            )}
+          </View>
 
-        <View>
-          <TextInput placeholder='Ask Anything...' placeholderTextColor="#A6A095" />
+          {/* Bottom Input Area */}
+          <ChatInput onSend={handleSend} />
         </View>
-
-        {/* <ChatInput onSend={handleSend} /> */}
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
+
   );
 };
 
