@@ -21,7 +21,7 @@ export function ChatHeader() {
         <Text className="text-lg font-black tracking-tight text-foreground uppercase">Snap AI</Text>
         <View className="flex-row items-center gap-1">
           <View className="w-1.5 h-1.5 rounded-full bg-primary" />
-          <Text className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Local Engine</Text>
+          <Text className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">On-Device AI</Text>
         </View>
       </View>
 

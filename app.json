@@ -7,7 +7,7 @@
     "icon": "./assets/images/icon.png",
     "scheme": "snapspend",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": false,
+    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.SnapSpend"
@@ -74,7 +74,8 @@
     ],
     "experiments": {
       "typedRoutes": true,
-      "reactCompiler": true
+      "reactCompiler": true,
+      "reactNativeNewArchitecture": true
     }
   }
 }

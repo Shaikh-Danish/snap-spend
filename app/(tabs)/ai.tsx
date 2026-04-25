@@ -9,7 +9,7 @@ import ChatThread from '@/model/chat-thread';
 import { Q } from '@nozbe/watermelondb';
 import withObservables from '@nozbe/with-observables';
 import React, { useState } from 'react';
-import { Text, View } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { map, of, switchMap } from 'rxjs';
 
@@ -28,11 +28,11 @@ const AiScreenContent = ({ thread, messages }: AiScreenProps) => {
 
   const {
     isReady,
+    isLoading,
     isDownloading,
     progress,
     error,
     modelInfo,
-    load,
     sendMessage,
   } = useAI();
 
@@ -81,16 +81,31 @@ const AiScreenContent = ({ thread, messages }: AiScreenProps) => {
     );
   }
 
-  if (!isReady) {
+  // Model is being downloaded for the first time — show full download UI
+  if (isDownloading) {
     return (
       <ModelLoader
-        onDownload={load}
-        isDownloading={isDownloading}
+        onDownload={() => {}}
+        isDownloading
         progress={progress}
         size={modelInfo.size}
         name={modelInfo.name}
         description={modelInfo.description}
       />
+    );
+  }
+
+  // Model is auto-loading from cache — show lightweight spinner
+  if (isLoading && !isReady) {
+    return (
+      <SafeAreaView className="flex-1 bg-background items-center justify-center">
+        <View className="items-center gap-3">
+          <ActivityIndicator size="large" color="#8B7355" />
+          <Text className="text-sm text-muted-foreground font-medium">
+            Initializing Snap AI…
+          </Text>
+        </View>
+      </SafeAreaView>
     );
   }
 

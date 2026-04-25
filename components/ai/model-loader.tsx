@@ -77,7 +77,7 @@ export function ModelLoader({
           <View className="flex-1 bg-card p-4 rounded-md border border-border items-start gap-1.5 shadow-xs">
             <Cpu size={16} className="text-primary" strokeWidth={2.5} />
             <View>
-              <Text className="text-[9px] font-black text-muted-foreground uppercase tracking-widest opacity-60">Engine</Text>
+              <Text className="text-[9px] font-black text-muted-foreground uppercase tracking-widest opacity-60">Intelligence</Text>
               <Text className="text-[11px] font-bold text-foreground">{name}</Text>
             </View>
           </View>
@@ -104,13 +104,10 @@ export function ModelLoader({
               strokeWidth={3}
             />
             <Text className="text-primary-foreground font-bold text-base uppercase tracking-tight">
-              Activate Engine ({size})
+              Activate Snap AI ({size})
             </Text>
           </View>
         </Pressable>
-        <Text className="text-[10px] text-muted-foreground text-center uppercase font-black tracking-[0.1em] opacity-40">
-          Secure Wi-Fi Connection Recommended
-        </Text>
       </View>
     </View>
   );

@@ -13,7 +13,7 @@ import { TotalBalance } from "@/components/home/total-balance";
 import { Card } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Bell } from "lucide-react-native";
 
 import { TransactionItem } from "@/components/home/transaction-item";
@@ -40,12 +40,12 @@ const Home = ({ accounts, recentTransactions }: HomeProps) => {
         style={{ paddingTop: Math.max(insets.top, 16) }}
       >
         <View className="flex-row items-center gap-2.5">
-          <Avatar alt="" className="w-9 h-9 border border-muted/50">
+          {/* <Avatar alt="" className="w-9 h-9 border border-muted/50">
             <AvatarImage src="https://ui-avatars.com/api/?name=User&background=7C3AED&color=fff" />
             <AvatarFallback>
               <Text>U</Text>
             </AvatarFallback>
-          </Avatar>
+          </Avatar> */}
         </View>
         <Text className="text-foreground text-lg font-bold">Dashboard</Text>
         <TouchableOpacity className="bg-white p-2 rounded-full shadow-sm border border-muted/20">

@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useCallback, useContext, useState } from 'react';
+import React, { createContext, ReactNode, useCallback, useContext, useRef, useState } from 'react';
 import { Platform } from 'react-native';
 import { GEMMA_4_E2B_IT, LiteRTLMInstance, useModel } from 'react-native-litert-lm';
 import { getModelInfo, ModelData } from './model-info';
@@ -6,6 +6,7 @@ import { getModelInfo, ModelData } from './model-info';
 interface AIContextType {
   model: LiteRTLMInstance | null;
   isReady: boolean;
+  isLoading: boolean;
   isDownloading: boolean;
   progress: number;
   error: string | null;
@@ -18,31 +19,53 @@ interface AIContextType {
 
 const AIContext = createContext<AIContextType | null>(null);
 
-const isEmulator = Platform.OS === 'android' &&
-  (Platform.constants?.Model?.includes('sdk') ||
-    Platform.constants?.Brand === 'google' ||
-    Platform.constants?.Fingerprint?.includes('generic'));
+// Default to CPU on Android — OpenCL GPU support is not universal across
+// Android hardware and useModel cannot re-initialize after a GPU failure.
+// iOS uses Metal which is universally available, so GPU is safe there.
+const defaultToCpu = Platform.OS === 'android';
 
 export function AIProvider({ children }: { children: ReactNode }) {
   const [hasStartedDownload, setHasStartedDownload] = useState(false);
-  const [forceCpu, setForceCpu] = useState(isEmulator);
+  const [forceCpu, setForceCpu] = useState(defaultToCpu);
+  const hasTriedGpuFallback = useRef(false);
   const modelInfo = getModelInfo(GEMMA_4_E2B_IT);
+
+  const backend = forceCpu ? 'cpu' : 'gpu';
 
   const { model, isReady, downloadProgress, error, load: loadModel } = useModel(
     GEMMA_4_E2B_IT,
     {
-      backend: forceCpu ? 'cpu' : 'gpu',
-      autoLoad: false,
+      backend,
+      autoLoad: true,
     }
   );
 
   // Auto-fallback to CPU if GPU (OpenCL) fails
   React.useEffect(() => {
-    if (error && (String(error).includes('OpenCL') || String(error).includes('Status Code: 2')) && !forceCpu) {
-      console.warn('GPU acceleration failed (OpenCL mismatch). Falling back to CPU...');
+    if (
+      error &&
+      !forceCpu &&
+      !hasTriedGpuFallback.current &&
+      (String(error).toLowerCase().includes('opencl') ||
+        String(error).includes('Status Code: 2') ||
+        String(error).toLowerCase().includes('gpu') ||
+        String(error).toLowerCase().includes('delegate'))
+    ) {
+      console.warn('GPU acceleration failed. Falling back to CPU...', error);
+      hasTriedGpuFallback.current = true;
       setForceCpu(true);
     }
   }, [error, forceCpu]);
+
+  // Auto-reload model after falling back to CPU
+  React.useEffect(() => {
+    if (forceCpu && hasTriedGpuFallback.current && hasStartedDownload && !isReady) {
+      console.log('Auto-reloading model with CPU backend...');
+      loadModel().catch((err) => {
+        console.error('CPU fallback load failed:', err);
+      });
+    }
+  }, [forceCpu, hasStartedDownload, isReady, loadModel]);
 
   const load = useCallback(async () => {
     setHasStartedDownload(true);
@@ -64,12 +87,28 @@ export function AIProvider({ children }: { children: ReactNode }) {
     });
   }, [model]);
 
+  // Suppress the OpenCL error from being shown to the user during fallback
+  const displayError = (() => {
+    if (!error) return null;
+    // If we're in the process of falling back to CPU, don't show the GPU error
+    if (hasTriedGpuFallback.current && forceCpu && !isReady && hasStartedDownload) {
+      return null;
+    }
+    return String(error);
+  })();
+
+  // isLoading = model is auto-loading from cache (not ready yet, no error, no active download)
+  // isDownloading = model is being downloaded for the first time (progress > 0 but not ready)
+  const isActivelyDownloading = !isReady && (downloadProgress || 0) > 0 && (downloadProgress || 0) < 1;
+  const isLoading = !isReady && !error && !isActivelyDownloading;
+
   const value = {
     model,
     isReady,
-    isDownloading: hasStartedDownload && !isReady,
+    isLoading,
+    isDownloading: isActivelyDownloading,
     progress: downloadProgress || 0,
-    error: error ? String(error) : null,
+    error: displayError,
     modelInfo,
     load,
     sendMessage,

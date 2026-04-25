@@ -38,7 +38,7 @@ export function AddNewExpenseFab({
   const focusedOptions = descriptors[state.routes[state.index].key].options;
 
   // Completely hide the tab bar if display: 'none' is set in options
-  if (focusedOptions.tabBarStyle?.display === 'none') {
+  if ((StyleSheet.flatten(focusedOptions.tabBarStyle) as any)?.display === 'none') {
     return null;
   }
 
@@ -160,7 +160,7 @@ export function AddNewExpenseFab({
     if (route.name.startsWith('+')) return false;
     const { options } = descriptors[route.key];
     // Also exclude if tabBarStyle is set to display none
-    if ((options.tabBarStyle as any)?.display === 'none') return false;
+    if ((StyleSheet.flatten(options.tabBarStyle) as any)?.display === 'none') return false;
     return true;
   });
 

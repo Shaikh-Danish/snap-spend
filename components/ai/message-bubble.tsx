@@ -31,7 +31,7 @@ export function MessageBubble({
         </Text>
       </View>
       <Text className="text-[9px] font-black text-muted-foreground/60 uppercase tracking-widest mt-2 px-1">
-        {isUser ? 'Personal Assistant' : 'Snap AI Engine'}
+        {isUser ? 'You' : 'Snap AI'}
       </Text>
     </View>
   );
