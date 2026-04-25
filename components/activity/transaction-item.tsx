@@ -1,7 +1,10 @@
 import { Text } from '@/components/ui/text';
 import Transaction from '@/model/transaction';
+import Wallet from '@/model/wallet';
+import withObservables from '@nozbe/with-observables';
 import {
   Car,
+  CreditCard,
   Home,
   ShoppingBag,
   Ticket,
@@ -10,6 +13,7 @@ import {
 } from 'lucide-react-native';
 import React from 'react';
 import { Pressable, View } from 'react-native';
+import { format } from 'date-fns';
 
 const CATEGORY_ICONS: Record<string, any> = {
   food: Utensils,
@@ -21,44 +25,88 @@ const CATEGORY_ICONS: Record<string, any> = {
   default: ShoppingBag,
 };
 
-const CATEGORY_COLORS: Record<string, string> = {
-  food: 'bg-orange-100 text-orange-600',
-  shopping: 'bg-blue-100 text-blue-600',
-  transport: 'bg-purple-100 text-purple-600',
-  housing: 'bg-emerald-100 text-emerald-600',
-  utilities: 'bg-yellow-100 text-yellow-600',
-  entertainment: 'bg-rose-100 text-rose-600',
-  default: 'bg-zinc-100 text-zinc-600',
+const CATEGORY_ICON_COLORS: Record<string, { bg: string; icon: string }> = {
+  food: { bg: 'rgba(251, 146, 60, 0.12)', icon: '#f97316' },
+  shopping: { bg: 'rgba(59, 130, 246, 0.12)', icon: '#3b82f6' },
+  transport: { bg: 'rgba(168, 85, 247, 0.12)', icon: '#a855f7' },
+  housing: { bg: 'rgba(16, 185, 129, 0.12)', icon: '#10b981' },
+  utilities: { bg: 'rgba(234, 179, 8, 0.12)', icon: '#eab308' },
+  entertainment: { bg: 'rgba(244, 63, 94, 0.12)', icon: '#f43f5e' },
+  default: { bg: 'rgba(161, 161, 170, 0.12)', icon: '#a1a1aa' },
 };
 
-export function TransactionItem({ transaction }: { transaction: Transaction }) {
-  const isExpense = transaction.amount < 0;
+type TransactionItemProps = {
+  transaction: Transaction;
+  wallet: Wallet;
+};
+
+function TransactionItemComponent({ transaction, wallet }: TransactionItemProps) {
+  const isIncome = transaction.type === 'income';
   const category = transaction.category?.toLowerCase() || 'default';
   const IconComp = CATEGORY_ICONS[category] || CATEGORY_ICONS.default;
-  const colorClasses = CATEGORY_COLORS[category] || CATEGORY_COLORS.default;
-  const bgClass = colorClasses.split(' ')[0];
-  const textClass = colorClasses.split(' ')[1];
+  const colors = CATEGORY_ICON_COLORS[category] || CATEGORY_ICON_COLORS.default;
+
+  const formattedTime = (() => {
+    try {
+      return format(new Date(transaction.date), 'hh:mm a');
+    } catch {
+      return '';
+    }
+  })();
 
   return (
-    <Pressable className="flex-row items-center justify-between py-4 px-4 active:bg-secondary/10">
-      <View className="flex-row items-center flex-1">
-        <View className={`w-12 h-12 rounded-2xl items-center justify-center ${bgClass}`}>
-          <IconComp size={22} className={textClass} />
+    <Pressable className="flex-row items-center justify-between py-3.5 px-5 active:opacity-70">
+      <View className="flex-row items-center flex-1 mr-3">
+        {/* Category Icon — rounded-md with tinted background */}
+        <View
+          className="w-11 h-11 rounded-md items-center justify-center"
+          style={{ backgroundColor: colors.bg }}
+        >
+          <IconComp size={20} color={colors.icon} />
         </View>
-        <View className="ml-4 flex-1">
-          <Text className="text-base font-bold text-foreground" numberOfLines={1}>
+
+        <View className="ml-3.5 flex-1">
+          <Text className="text-[14px] font-bold text-foreground" numberOfLines={1}>
             {transaction.description || transaction.category}
           </Text>
-          <Text className="text-xs text-muted-foreground mt-0.5" numberOfLines={1}>
-            {transaction.type} • {transaction.status}
-          </Text>
+          <View className="flex-row items-center mt-0.5 gap-1.5">
+            <Text className="text-[11px] font-semibold text-muted-foreground capitalize">
+              {transaction.category}
+            </Text>
+            {wallet?.name && (
+              <>
+                <View className="w-0.5 h-0.5 rounded-full bg-muted-foreground/40" />
+                <View className="flex-row items-center gap-0.5">
+                  <CreditCard size={9} color="#a1a1aa" />
+                  <Text className="text-[10px] font-medium text-muted-foreground/70">
+                    {wallet.name}
+                  </Text>
+                </View>
+              </>
+            )}
+          </View>
         </View>
       </View>
-      <View className="items-end ml-4">
-        <Text className={`text-base font-extrabold ${isExpense ? 'text-foreground' : 'text-emerald-600'}`}>
-          {isExpense ? '' : '+'}{transaction.amount.toLocaleString('en-IN', { style: 'currency', currency: 'INR' })}
+
+      <View className="items-end">
+        <Text
+          className={`text-[14px] font-black tabular-nums ${isIncome ? 'text-emerald-600' : 'text-destructive'}`}
+        >
+          {isIncome ? '+' : '−'}₹{Math.abs(transaction.amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
         </Text>
+        {formattedTime ? (
+          <Text className="text-[10px] font-medium text-muted-foreground/50 mt-0.5 tabular-nums">
+            {formattedTime}
+          </Text>
+        ) : null}
       </View>
     </Pressable>
   );
 }
+
+const enhance = withObservables(['transaction'], ({ transaction }) => ({
+  transaction: transaction.observe(),
+  wallet: transaction.account.observe(), 
+}));
+
+export const TransactionItem = enhance(TransactionItemComponent);

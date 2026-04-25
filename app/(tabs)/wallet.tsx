@@ -1,7 +1,7 @@
 import { AddWalletForm } from '@/components/wallet/add-wallet-form';
-import RecentActivity from '@/components/wallet/recent-activity';
 import { WalletBalance } from '@/components/wallet/wallet-balance';
 import { WalletCards } from '@/components/wallet/wallet-cards';
+import WalletSpendSummary from '@/components/wallet/wallet-spend-summary';
 import { database } from '@/model';
 import Wallet from '@/model/wallet';
 import withObservables from '@nozbe/with-observables';
@@ -34,8 +34,8 @@ function WalletScreen({ wallets }: WalletScreenProps) {
           onEditPress={(wallet) => setEditingWallet(wallet)}
         />
 
-        <View className="mt-4">
-          <RecentActivity />
+        <View className="mt-2">
+          <WalletSpendSummary />
         </View>
       </ScrollView>
 
