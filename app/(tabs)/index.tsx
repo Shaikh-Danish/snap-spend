@@ -30,7 +30,7 @@ const Home = ({ accounts, recentTransactions }: HomeProps) => {
 
   return (
     <ScrollView
-      className="flex-1 bg-[#FDFDFF]"
+      className="flex-1 bg-background"
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 100 }}
     >
@@ -48,10 +48,10 @@ const Home = ({ accounts, recentTransactions }: HomeProps) => {
           </Avatar> */}
         </View>
         <Text className="text-foreground text-lg font-bold">Dashboard</Text>
-        <TouchableOpacity className="bg-white p-2 rounded-full shadow-sm border border-muted/20">
+        <TouchableOpacity className="bg-card p-2 rounded-full shadow-sm border border-muted/20">
           <View className="relative">
-            <Bell size={18} color="#09090b" />
-            <View className="absolute -right-0.5 -top-0.5 w-1.5 h-1.5 bg-rose-500 rounded-full border border-white" />
+            <Bell size={18} className="text-foreground" />
+            <View className="absolute -right-0.5 -top-0.5 w-1.5 h-1.5 bg-rose-500 rounded-full border border-card" />
           </View>
         </TouchableOpacity>
       </View>
@@ -100,7 +100,7 @@ const Home = ({ accounts, recentTransactions }: HomeProps) => {
             <TransactionItem key={t.id} transaction={t} />
           ))
         ) : (
-          <View className="bg-white p-6 rounded-[32px] border border-muted/20 items-center">
+          <View className="bg-card p-6 rounded-[32px] border border-muted/20 items-center">
             <Text className="text-muted-foreground">No recent transactions</Text>
           </View>
         )}

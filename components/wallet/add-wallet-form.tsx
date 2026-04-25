@@ -1,9 +1,11 @@
 import Wallet, { WalletType } from '@/model/wallet';
+import { THEME } from '@/lib/theme';
 import { ChevronDown, Wallet as WalletIcon, X } from 'lucide-react-native';
 import React from 'react';
 import { Controller } from 'react-hook-form';
 import { Modal, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useUniwind } from 'uniwind';
 import { AmountDisplay } from '../add-transaction/amount-display';
 import { NumericKeypad } from '../numeric-keypad';
 import { WALLET_TYPE_ICONS } from './constants';
@@ -16,6 +18,8 @@ type AddWalletFormProps = {
 };
 
 export const AddWalletForm = ({ onCancel, onSubmit, initialWallet }: AddWalletFormProps) => {
+  const { theme } = useUniwind();
+  const colors = THEME[theme ?? 'light'];
   const { state, actions, control } = useWalletForm({
     onSuccess: onCancel,
     initialWallet
@@ -26,11 +30,11 @@ export const AddWalletForm = ({ onCancel, onSubmit, initialWallet }: AddWalletFo
 
   return (
     <Modal visible transparent={false} animationType="slide">
-      <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }} edges={['top', 'bottom']}>
+      <SafeAreaView style={{ flex: 1 }} className="bg-background" edges={['top', 'bottom']}>
         {/* 1. Header */}
-        <View className="flex-row items-center justify-between px-6 h-14 border-b border-zinc-50">
+        <View className="flex-row items-center justify-between px-6 h-14 border-b border-border/30">
           <Pressable onPress={onCancel} className="p-2 -ml-2">
-            <X size={24} color="#635b4b" />
+            <X size={24} className="text-foreground" />
           </Pressable>
           <Text className="text-foreground font-black text-[10px] uppercase tracking-[4px]">
             {isEditing ? 'Edit Wallet' : 'New Wallet'}
@@ -58,7 +62,7 @@ export const AddWalletForm = ({ onCancel, onSubmit, initialWallet }: AddWalletFo
                   <TextInput
                     placeholder="E.g. HDFC Bank"
                     placeholderTextColor="#A6A095"
-                    className={`text-2xl text-foreground font-bold py-2 border-b-2 ${errors.name ? 'border-destructive' : 'border-zinc-100'}`}
+                    className={`text-2xl text-foreground font-bold py-2 border-b-2 ${errors.name ? 'border-destructive' : 'border-border'}`}
                     value={value}
                     onChangeText={onChange}
                   />
@@ -79,10 +83,10 @@ export const AddWalletForm = ({ onCancel, onSubmit, initialWallet }: AddWalletFo
             <View className="flex-row items-center gap-4">
               <Pressable
                 onPress={() => actions.setShowTypeModal(true)}
-                className="flex-1 flex-row items-center justify-between bg-zinc-50 px-5 py-4 rounded-2xl border border-zinc-100"
+                className="flex-1 flex-row items-center justify-between bg-muted/30 px-5 py-4 rounded-2xl border border-border"
               >
                 <View className="flex-row items-center gap-3">
-                  <CurrentIcon size={18} color="#27272a" />
+                  <CurrentIcon size={18} className="text-foreground" />
                   <Text className="text-sm font-bold text-foreground capitalize">
                     {type.replace(/_/g, ' ')}
                   </Text>
@@ -91,7 +95,7 @@ export const AddWalletForm = ({ onCancel, onSubmit, initialWallet }: AddWalletFo
               </Pressable>
 
               <View className="flex-1">
-                <View className={`bg-zinc-50 px-5 py-4 rounded-2xl border ${errors.walletId ? 'border-destructive' : 'border-zinc-100'}`}>
+                <View className={`bg-muted/30 px-5 py-4 rounded-2xl border ${errors.walletId ? 'border-destructive' : 'border-border'}`}>
                   <Controller
                     control={control}
                     name="walletId"
@@ -119,15 +123,15 @@ export const AddWalletForm = ({ onCancel, onSubmit, initialWallet }: AddWalletFo
         </ScrollView>
 
         {/* 4. Keypad & Action */}
-        <View className="bg-white pt-4 shadow-2xl">
+        <View className="bg-background pt-4 shadow-2xl">
           <NumericKeypad
             onPress={actions.handleNumberPress}
             onDelete={actions.handleDeletePress}
           />
-          <View className="px-6 py-6 border-t border-zinc-50">
+          <View className="px-6 py-6 border-t border-border/30">
             <Pressable
               onPress={actions.onSubmit}
-              className={`py-4.5 rounded-[20px] items-center justify-center ${name && (isEditing || walletId) ? 'bg-primary' : 'bg-zinc-100 opacity-50'
+              className={`py-4.5 rounded-[20px] items-center justify-center ${name && (isEditing || walletId) ? 'bg-primary' : 'bg-muted opacity-50'
                 }`}
             >
               <Text className="text-primary-foreground text-sm font-black uppercase tracking-[3px]">
@@ -143,8 +147,8 @@ export const AddWalletForm = ({ onCancel, onSubmit, initialWallet }: AddWalletFo
             className="flex-1 bg-black/60 justify-end"
             onPress={() => actions.setShowTypeModal(false)}
           >
-            <View className="bg-white rounded-t-[40px] p-8 pb-12">
-              <View className="w-12 h-1.5 bg-zinc-100 rounded-full self-center mb-8" />
+            <View className="bg-card rounded-t-[40px] p-8 pb-12">
+              <View className="w-12 h-1.5 bg-muted rounded-full self-center mb-8" />
               <Text className="text-xl font-black text-foreground mb-6">Select Wallet Type</Text>
               <ScrollView className="max-h-[400px]">
                 <View className="flex-row flex-wrap gap-3">
@@ -158,11 +162,11 @@ export const AddWalletForm = ({ onCancel, onSubmit, initialWallet }: AddWalletFo
                           actions.setValue('type', wType);
                           actions.setShowTypeModal(false);
                         }}
-                        className={`flex-row items-center gap-3 px-5 py-4 rounded-2xl border ${isSelected ? 'bg-primary border-primary' : 'bg-zinc-50 border-zinc-100'
+                        className={`flex-row items-center gap-3 px-5 py-4 rounded-2xl border ${isSelected ? 'bg-primary border-primary' : 'bg-muted/30 border-border'
                           }`}
                       >
-                        <TypeIcon size={18} color={isSelected ? 'white' : '#27272a'} />
-                        <Text className={`font-bold text-xs capitalize ${isSelected ? 'text-white' : 'text-foreground'}`}>
+                        <TypeIcon size={18} color={isSelected ? colors.primaryForeground : colors.foreground} />
+                        <Text className={`font-bold text-xs capitalize ${isSelected ? 'text-primary-foreground' : 'text-foreground'}`}>
                           {wType.replace(/_/g, ' ')}
                         </Text>
                       </TouchableOpacity>

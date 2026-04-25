@@ -145,10 +145,10 @@ export function ActivityFilterDialog({
                         key={opt.value}
                         onPress={() => onTypeFilterChange(opt.value as TypeFilter)}
                         className={`flex-1 items-center justify-center py-4 rounded-2xl border ${
-                          isSelected ? 'bg-zinc-900 border-zinc-900 shadow-md shadow-black/20' : 'bg-secondary/20 border-transparent'
+                          isSelected ? 'bg-primary border-primary shadow-md shadow-primary/20' : 'bg-secondary/20 border-transparent'
                         }`}
                       >
-                        <Text className={`text-[11px] font-bold ${isSelected ? 'text-white' : 'text-muted-foreground'}`}>
+                        <Text className={`text-[11px] font-bold ${isSelected ? 'text-primary-foreground' : 'text-muted-foreground'}`}>
                           {opt.label.split(' ')[0]}
                         </Text>
                       </Pressable>
@@ -160,7 +160,7 @@ export function ActivityFilterDialog({
               <View className="mt-2 gap-3">
                 <DialogClose asChild>
                   <Button className="rounded-[24px] h-14 bg-primary shadow-lg shadow-primary/20">
-                    <Text className="text-white font-black text-base">Apply Filters</Text>
+                    <Text className="text-primary-foreground font-black text-base">Apply Filters</Text>
                   </Button>
                 </DialogClose>
               </View>

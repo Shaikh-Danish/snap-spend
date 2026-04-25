@@ -87,11 +87,11 @@ const CategoryPickerComponent = ({ selectedId, onSelect, categories }: CategoryP
       {/* New Category Modal */}
       <Modal visible={isModalVisible} transparent animationType="slide">
         <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' }}>
-          <View className="bg-white rounded-t-3xl p-6 pb-12">
+          <View className="bg-card rounded-t-3xl p-6 pb-12">
             <View className="flex-row justify-between items-center mb-8">
               <Text className="text-xl font-bold">New Category</Text>
               <TouchableOpacity onPress={() => setIsModalVisible(false)} className="px-2 py-1">
-                <Text className="text-zinc-400 font-bold">Cancel</Text>
+                <Text className="text-muted-foreground font-bold">Cancel</Text>
               </TouchableOpacity>
             </View>
 

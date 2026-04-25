@@ -34,7 +34,7 @@ export function WalletCards({ wallets, onAddPress, onEditPress }: WalletCardsPro
       {!wallets?.length ? (
         <View className="py-20 items-center justify-center">
           <View className="mb-6 opacity-20">
-            <WalletIcon size={48} color="#635b4b" strokeWidth={1} />
+            <WalletIcon size={48} className="text-foreground" strokeWidth={1} />
           </View>
           <Text className="text-base font-bold text-foreground text-center">
             No active wallets
@@ -55,7 +55,7 @@ export function WalletCards({ wallets, onAddPress, onEditPress }: WalletCardsPro
               >
                 <View className="flex-row items-center gap-5">
                   <View className="w-10 h-10 items-center justify-center">
-                    <Icon size={22} color="#635b4b" strokeWidth={2} />
+                    <Icon size={22} className="text-foreground" strokeWidth={2} />
                   </View>
                   <View>
                     <Text className="text-lg font-bold text-foreground tracking-tight leading-5">

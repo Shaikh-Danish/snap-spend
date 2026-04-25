@@ -21,19 +21,19 @@ const AddTransactionFormComponent = ({ wallets }: AddTransactionFormProps) => {
   const { amount, type, categoryId, selectedDate, accountId, selectedWallet, showDatePicker, showWalletModal, errors } = state;
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }} edges={['top', 'bottom']}>
+    <SafeAreaView style={{ flex: 1 }} className="bg-background" edges={['top', 'bottom']}>
       {/* 1. Header */}
       <View className="flex-row items-center justify-between px-6 h-14">
         {/* Close Button */}
         <Pressable onPress={actions.handleCancel} className="p-2 -ml-2">
-          <X size={24} color="#635b4b" />
+          <X size={24} className="text-foreground" />
         </Pressable>
 
         {/* Type Switcher */}
-        <View className="flex-row bg-zinc-100 p-1 rounded-full">
+        <View className="flex-row bg-muted/50 p-1 rounded-full">
           <Pressable
             onPress={() => actions.setValue('type', 'expense')}
-            className={`px-4 py-1.5 rounded-full ${type === 'expense' ? 'bg-white shadow-sm' : ''}`}
+            className={`px-4 py-1.5 rounded-full ${type === 'expense' ? 'bg-card shadow-sm' : ''}`}
           >
             <Text className={`text-[10px] font-bold uppercase tracking-wider ${type === 'expense' ? 'text-foreground' : 'text-muted-foreground'}`}>
               Expense
@@ -41,7 +41,7 @@ const AddTransactionFormComponent = ({ wallets }: AddTransactionFormProps) => {
           </Pressable>
           <Pressable
             onPress={() => actions.setValue('type', 'income')}
-            className={`px-4 py-1.5 rounded-full ${type === 'income' ? 'bg-white shadow-sm' : ''}`}
+            className={`px-4 py-1.5 rounded-full ${type === 'income' ? 'bg-card shadow-sm' : ''}`}
           >
             <Text className={`text-[10px] font-bold uppercase tracking-wider ${type === 'income' ? 'text-foreground' : 'text-muted-foreground'}`}>
               Income
@@ -50,7 +50,7 @@ const AddTransactionFormComponent = ({ wallets }: AddTransactionFormProps) => {
         </View>
 
         <Pressable className="p-2 -mr-2">
-          <MoreVertical size={24} color="#635b4b" />
+          <MoreVertical size={24} className="text-foreground" />
         </Pressable>
       </View>
 
@@ -65,7 +65,7 @@ const AddTransactionFormComponent = ({ wallets }: AddTransactionFormProps) => {
         <View className="flex-row items-center gap-2 px-6 mb-4">
           <Pressable
             onPress={() => actions.setShowWalletModal(true)}
-            className={`flex-1 flex-row items-center justify-between bg-zinc-50 px-4 py-3 rounded-md ${errors.accountId ? 'border border-destructive' : ''}`}
+            className={`flex-1 flex-row items-center justify-between bg-muted/30 px-4 py-3 rounded-md ${errors.accountId ? 'border border-destructive' : ''}`}
           >
             <View className="flex-row items-center gap-2">
               <WalletIcon size={16} color="#A6A095" />
@@ -78,7 +78,7 @@ const AddTransactionFormComponent = ({ wallets }: AddTransactionFormProps) => {
 
           <Pressable
             onPress={actions.openDatePicker}
-            className="flex-1 flex-row items-center justify-between bg-zinc-50 px-4 py-3 rounded-md"
+            className="flex-1 flex-row items-center justify-between bg-muted/30 px-4 py-3 rounded-md"
           >
             <View className="flex-row items-center gap-2">
               <Calendar size={16} color="#A6A095" />
@@ -99,7 +99,7 @@ const AddTransactionFormComponent = ({ wallets }: AddTransactionFormProps) => {
               <TextInput
                 placeholder="What is this for?"
                 placeholderTextColor="#A6A095"
-                className="text-base text-foreground font-medium py-2 border-b border-zinc-100"
+                className="text-base text-foreground font-medium py-2 border-b border-border"
                 value={value}
                 onChangeText={onChange}
                 multiline={false}
@@ -149,7 +149,7 @@ const AddTransactionFormComponent = ({ wallets }: AddTransactionFormProps) => {
           className="flex-1 bg-black/40 justify-center px-6"
           onPress={() => actions.setShowWalletModal(false)}
         >
-          <View className="bg-white rounded-2xl p-6">
+          <View className="bg-card rounded-2xl p-6">
             <Text className="text-lg font-bold mb-4">Select Wallet</Text>
             <ScrollView className="max-h-[400px]">
               {wallets.map(w => (
@@ -159,7 +159,7 @@ const AddTransactionFormComponent = ({ wallets }: AddTransactionFormProps) => {
                     actions.setValue('accountId', w.id);
                     actions.setShowWalletModal(false);
                   }}
-                  className={`flex-row items-center justify-between py-4 border-b border-zinc-50 ${accountId === w.id ? 'opacity-100' : 'opacity-50'}`}
+                  className={`flex-row items-center justify-between py-4 border-b border-border/30 ${accountId === w.id ? 'opacity-100' : 'opacity-50'}`}
                 >
                   <View className="flex-row items-center gap-3">
                     <View className={`w-1.5 h-1.5 rounded-full ${accountId === w.id ? 'bg-primary' : 'bg-muted'}`} />

@@ -10,16 +10,16 @@ interface TransactionItemProps {
 
 const getCategoryIcon = (category: string) => {
   const cat = category.toLowerCase();
-  if (cat.includes('food') || cat.includes('coffee')) return <Coffee size={20} color="#09090b" />;
-  if (cat.includes('shop')) return <ShoppingBag size={20} color="#09090b" />;
-  if (cat.includes('car') || cat.includes('transport')) return <Car size={20} color="#09090b" />;
-  if (cat.includes('rent') || cat.includes('home')) return <Home size={20} color="#09090b" />;
-  return <Smartphone size={20} color="#09090b" />;
+  if (cat.includes('food') || cat.includes('coffee')) return <Coffee size={20} className="text-foreground" />;
+  if (cat.includes('shop')) return <ShoppingBag size={20} className="text-foreground" />;
+  if (cat.includes('car') || cat.includes('transport')) return <Car size={20} className="text-foreground" />;
+  if (cat.includes('rent') || cat.includes('home')) return <Home size={20} className="text-foreground" />;
+  return <Smartphone size={20} className="text-foreground" />;
 };
 
 export const TransactionItem = ({ transaction }: TransactionItemProps) => {
   return (
-    <View className="flex-row items-center justify-between mb-2.5 bg-white p-3 rounded-[20px] shadow-sm border border-muted/20">
+    <View className="flex-row items-center justify-between mb-2.5 bg-card p-3 rounded-[20px] shadow-sm border border-muted/20">
       <View className="flex-row items-center gap-3">
         <View className="bg-secondary p-2 rounded-xl">
           {getCategoryIcon(transaction.category)}
