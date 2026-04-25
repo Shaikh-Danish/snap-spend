@@ -6,17 +6,17 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { WalletFormValues, walletSchema } from './schema';
 
-export const useWalletForm = ({ onSuccess }: { onSuccess?: () => void } = {}) => {
+export const useWalletForm = ({ onSuccess, initialWallet }: { onSuccess?: () => void, initialWallet?: Wallet } = {}) => {
     const router = useRouter();
     const [isTypeModalOpen, setIsTypeModalOpen] = useState(false);
 
     const { control, handleSubmit, setValue, watch, formState: { errors } } = useForm<WalletFormValues>({
         resolver: zodResolver(walletSchema),
         defaultValues: {
-            name: '',
-            type: WalletType.SAVINGS,
-            balance: '0',
-            walletId: ''
+            name: initialWallet?.name || '',
+            type: initialWallet?.type || WalletType.SAVINGS,
+            balance: initialWallet?.balance.toString() || '0',
+            walletId: initialWallet?.walletId || ''
         },
     });
 
@@ -50,12 +50,21 @@ export const useWalletForm = ({ onSuccess }: { onSuccess?: () => void } = {}) =>
     const onSubmit = async (values: WalletFormValues) => {
         try {
             await database.write(async () => {
-                await database.collections.get<Wallet>('wallets').create((w) => {
-                    w.name = values.name;
-                    w.type = values.type;
-                    w.balance = parseFloat(values.balance);
-                    w.walletId = values.walletId;
-                });
+                if (initialWallet) {
+                    await initialWallet.update((w) => {
+                        w.name = values.name;
+                        w.type = values.type;
+                        w.balance = parseFloat(values.balance);
+                        w.walletId = values.walletId;
+                    });
+                } else {
+                    await database.collections.get<Wallet>('wallets').create((w) => {
+                        w.name = values.name;
+                        w.type = values.type;
+                        w.balance = parseFloat(values.balance);
+                        w.walletId = values.walletId;
+                    });
+                }
             });
 
             if (onSuccess) {
@@ -76,6 +85,7 @@ export const useWalletForm = ({ onSuccess }: { onSuccess?: () => void } = {}) =>
             walletId,
             isTypeModalOpen,
             errors,
+            isEditing: !!initialWallet
         },
         actions: {
             setShowTypeModal: setIsTypeModalOpen,

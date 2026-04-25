@@ -7,9 +7,10 @@ import { WALLET_TYPE_ICONS } from './constants';
 type WalletCardsProps = {
   wallets: Wallet[];
   onAddPress: () => void;
+  onEditPress: (wallet: Wallet) => void;
 };
 
-export function WalletCards({ wallets, onAddPress }: WalletCardsProps) {
+export function WalletCards({ wallets, onAddPress, onEditPress }: WalletCardsProps) {
   return (
     <View className="px-6 mb-10">
       {/* List Header */}
@@ -47,9 +48,10 @@ export function WalletCards({ wallets, onAddPress }: WalletCardsProps) {
           {wallets.map((wallet) => {
             const Icon = WALLET_TYPE_ICONS[wallet.type] || WalletIcon;
             return (
-              <View
+              <Pressable
                 key={wallet.id}
-                className="flex-row items-center justify-between"
+                onPress={() => onEditPress(wallet)}
+                className="flex-row items-center justify-between active:opacity-60"
               >
                 <View className="flex-row items-center gap-5">
                   <View className="w-10 h-10 items-center justify-center">
@@ -76,7 +78,7 @@ export function WalletCards({ wallets, onAddPress }: WalletCardsProps) {
                     </Text>
                   </View>
                 </View>
-              </View>
+              </Pressable>
             );
           })}
         </View>

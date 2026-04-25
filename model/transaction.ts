@@ -6,7 +6,7 @@ export default class Transaction extends Model {
 
   static associations = {
     categories: { type: 'belongs_to' as const, key: 'category_id' },
-    accounts: { type: 'belongs_to' as const, key: 'account_id' },
+    wallets: { type: 'belongs_to' as const, key: 'account_id' },
   };
 
   @field('amount') amount!: number;
@@ -19,7 +19,7 @@ export default class Transaction extends Model {
   @date('date') date!: Date;
   @readonly @date('created_at') createdAt!: Date;
 
-  @relation('accounts', 'account_id') account!: any;
+  @relation('wallets', 'account_id') account!: any;
   @text('category_id') categoryId!: string;
   @relation('categories', 'category_id') categoryRel!: Relation<any>;
 }

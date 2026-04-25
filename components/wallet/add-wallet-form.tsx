@@ -1,4 +1,4 @@
-import { WalletType } from '@/model/wallet';
+import Wallet, { WalletType } from '@/model/wallet';
 import { ChevronDown, Wallet as WalletIcon, X } from 'lucide-react-native';
 import React from 'react';
 import { Controller } from 'react-hook-form';
@@ -11,12 +11,16 @@ import { useWalletForm } from './use-wallet-form';
 
 type AddWalletFormProps = {
   onCancel: () => void;
-  onSubmit: (values: any) => void;
+  onSubmit?: (values: any) => void;
+  initialWallet?: Wallet;
 };
 
-export const AddWalletForm = ({ onCancel, onSubmit }: AddWalletFormProps) => {
-  const { state, actions, control } = useWalletForm({ onSuccess: onCancel });
-  const { balance, type, name, walletId, isTypeModalOpen, errors } = state;
+export const AddWalletForm = ({ onCancel, onSubmit, initialWallet }: AddWalletFormProps) => {
+  const { state, actions, control } = useWalletForm({
+    onSuccess: onCancel,
+    initialWallet
+  });
+  const { balance, type, name, walletId, isTypeModalOpen, errors, isEditing } = state;
 
   const CurrentIcon = WALLET_TYPE_ICONS[type] || WalletIcon;
 
@@ -29,7 +33,7 @@ export const AddWalletForm = ({ onCancel, onSubmit }: AddWalletFormProps) => {
             <X size={24} color="#635b4b" />
           </Pressable>
           <Text className="text-foreground font-black text-[10px] uppercase tracking-[4px]">
-            New Wallet
+            {isEditing ? 'Edit Wallet' : 'New Wallet'}
           </Text>
           <View className="w-10" />
         </View>
@@ -39,7 +43,7 @@ export const AddWalletForm = ({ onCancel, onSubmit }: AddWalletFormProps) => {
           <View className="py-10 items-center justify-center">
             <AmountDisplay amount={balance} />
             <Text className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest -mt-2">
-              Starting Balance
+              {isEditing ? 'Current Balance' : 'Starting Balance'}
             </Text>
           </View>
 
@@ -123,11 +127,11 @@ export const AddWalletForm = ({ onCancel, onSubmit }: AddWalletFormProps) => {
           <View className="px-6 py-6 border-t border-zinc-50">
             <Pressable
               onPress={actions.onSubmit}
-              className={`py-4.5 rounded-[20px] items-center justify-center ${name && walletId ? 'bg-primary' : 'bg-zinc-100 opacity-50'
+              className={`py-4.5 rounded-[20px] items-center justify-center ${name && (isEditing || walletId) ? 'bg-primary' : 'bg-zinc-100 opacity-50'
                 }`}
             >
               <Text className="text-primary-foreground text-sm font-black uppercase tracking-[3px]">
-                Connect Wallet
+                {isEditing ? 'Save Changes' : 'Connect Wallet'}
               </Text>
             </Pressable>
           </View>

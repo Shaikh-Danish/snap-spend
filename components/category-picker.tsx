@@ -20,22 +20,23 @@ const TAILWIND_500_COLORS = [
 
 const CategoryPickerComponent = ({ selectedId, onSelect, categories }: CategoryPickerProps) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [newCatName, setNewCatName] = useState('');
-  const [selectedColor, setSelectedColor] = useState(TAILWIND_500_COLORS[0]); // Default to Red 500
+  const [categoryName, setCategoryName] = useState('');
+  const [categoryColor, setCategoryColor] = useState(TAILWIND_500_COLORS[0]);
 
   const handleCreateCategory = async () => {
-    if (!newCatName.trim()) return;
+    if (!categoryName.trim()) return;
 
     try {
       await database.write(async () => {
         await database.collections.get<Category>('categories').create((c) => {
-          c.name = newCatName.trim();
-          c.icon = ''; // No emoji needed
-          c.color = selectedColor;
+          c.name = categoryName.trim();
+          c.icon = '';
+          c.color = categoryColor;
           c.usageCount = 0;
         });
       });
-      setNewCatName('');
+
+      setCategoryName('');
       setIsModalVisible(false);
     } catch (error) {
       console.error('Failed to create category:', error);
@@ -98,8 +99,8 @@ const CategoryPickerComponent = ({ selectedId, onSelect, categories }: CategoryP
               placeholder="Enter category name"
               placeholderTextColor="#999"
               className="bg-secondary/10 p-5 rounded-md mb-8 text-lg font-medium"
-              value={newCatName}
-              onChangeText={setNewCatName}
+              value={categoryName}
+              onChangeText={setCategoryName}
               autoFocus
             />
 
@@ -109,9 +110,9 @@ const CategoryPickerComponent = ({ selectedId, onSelect, categories }: CategoryP
                 {TAILWIND_500_COLORS.map(c => (
                   <TouchableOpacity
                     key={c}
-                    onPress={() => setSelectedColor(c)}
+                    onPress={() => setCategoryColor(c)}
                     style={{ backgroundColor: c }}
-                    className={`w-10 h-10 rounded-md ${selectedColor === c ? 'border-4 border-white' : ''}`}
+                    className={`w-10 h-10 rounded-md ${categoryColor === c ? 'border-4 border-white' : ''}`}
                   />
                 ))}
               </View>

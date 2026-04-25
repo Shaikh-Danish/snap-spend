@@ -3,7 +3,7 @@ import RecentActivity from '@/components/wallet/recent-activity';
 import { WalletBalance } from '@/components/wallet/wallet-balance';
 import { WalletCards } from '@/components/wallet/wallet-cards';
 import { database } from '@/model';
-import Wallet, { WalletType } from '@/model/wallet';
+import Wallet from '@/model/wallet';
 import withObservables from '@nozbe/with-observables';
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
@@ -14,38 +14,35 @@ type WalletScreenProps = {
 }
 
 function WalletScreen({ wallets }: WalletScreenProps) {
+  const [editingWallet, setEditingWallet] = useState<Wallet | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   const totalBalance = wallets.reduce((acc, curr) => acc + (curr.balance || 0), 0);
 
-  const handleAddWallet = async (data: { name: string; balance: string, type: WalletType, walletId?: string }) => {
-    await database.write(async () => {
-      await database.collections.get<Wallet>('wallets').create((wallet) => {
-        wallet.name = data.name;
-        wallet.balance = parseFloat(data.balance);
-        wallet.type = data.type;
-        wallet.walletId = data.walletId;
-      });
-    });
-
+  const handleCloseModal = () => {
     setIsAddModalOpen(false);
+    setEditingWallet(null);
   };
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={['top']}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <WalletBalance totalBalance={totalBalance} />
-        <WalletCards wallets={wallets} onAddPress={() => setIsAddModalOpen(true)} />
+        <WalletCards
+          wallets={wallets}
+          onAddPress={() => setIsAddModalOpen(true)}
+          onEditPress={(wallet) => setEditingWallet(wallet)}
+        />
 
         <View className="mt-4">
           <RecentActivity />
         </View>
       </ScrollView>
 
-      {isAddModalOpen && (
+      {(isAddModalOpen || editingWallet) && (
         <AddWalletForm
-          onSubmit={handleAddWallet}
-          onCancel={() => setIsAddModalOpen(false)}
+          initialWallet={editingWallet || undefined}
+          onCancel={handleCloseModal}
         />
       )}
     </SafeAreaView>

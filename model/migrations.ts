@@ -59,5 +59,38 @@ export default schemaMigrations({
                 }),
             ],
         },
+        {
+            toVersion: 6,
+            steps: [
+                {
+                    type: 'add_columns',
+                    table: 'transactions',
+                    columns: [
+                        { name: 'category', type: 'string' },
+                        { name: 'account_id', type: 'string', isIndexed: true },
+                        { name: 'external_id', type: 'string', isOptional: true },
+                        { name: 'status', type: 'string' },
+                        { name: 'created_at', type: 'number' },
+                    ],
+                },
+                {
+                    type: 'add_columns',
+                    table: 'budgets',
+                    columns: [
+                        { name: 'amount_limit', type: 'number' },
+                        { name: 'category', type: 'string' },
+                        { name: 'start_date', type: 'number' },
+                    ],
+                },
+                {
+                    type: 'add_columns',
+                    table: 'category_rules',
+                    columns: [
+                        { name: 'merchant_name', type: 'string' },
+                        { name: 'assigned_category', type: 'string' },
+                    ],
+                },
+            ],
+        },
     ],
 });

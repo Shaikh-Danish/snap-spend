@@ -65,7 +65,7 @@ const AddTransactionFormComponent = ({ wallets }: AddTransactionFormProps) => {
         <View className="flex-row items-center gap-2 px-6 mb-4">
           <Pressable
             onPress={() => actions.setShowWalletModal(true)}
-            className="flex-1 flex-row items-center justify-between bg-zinc-50 px-4 py-3 rounded-md"
+            className={`flex-1 flex-row items-center justify-between bg-zinc-50 px-4 py-3 rounded-md ${errors.accountId ? 'border border-destructive' : ''}`}
           >
             <View className="flex-row items-center gap-2">
               <WalletIcon size={16} color="#A6A095" />
@@ -131,7 +131,13 @@ const AddTransactionFormComponent = ({ wallets }: AddTransactionFormProps) => {
               <Text className="text-primary-foreground text-sm font-bold uppercase tracking-[2px]">Save Transaction</Text>
             </Pressable>
             {errors.amount && (
-              <Text className="text-destructive text-center text-xs mt-2">{errors.amount.message}</Text>
+              <Text className="text-destructive text-center text-xs mt-2 font-bold">{errors.amount.message}</Text>
+            )}
+            {errors.category && (
+              <Text className="text-destructive text-center text-xs mt-2 font-bold">{errors.category.message}</Text>
+            )}
+            {errors.accountId && (
+              <Text className="text-destructive text-center text-xs mt-2 font-bold">{errors.accountId.message}</Text>
             )}
           </View>
         </View>
